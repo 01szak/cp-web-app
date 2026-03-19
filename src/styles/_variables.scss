@@ -1,0 +1,30 @@
+:root {
+  /* Colors */
+  --color-bg-main: #505f33;
+  --color-bg-section-dark: #3e4a27;
+  --color-bg-footer: #2a331b;
+  --color-bg-light: #e8e6d8;
+  --color-bg-light-soft: #f3f1e7;
+
+  --color-text-light: #e8e6d8;
+  --color-text-dark: #1f1f1f;
+  --color-text-muted: #bfc5a8;
+
+  --color-accent-gold: #c2a14a;
+  --color-accent-hover: #b89a3c;
+  --color-accent-warm: #b45f2c;
+
+  --color-border-subtle: #3e4a27;
+  --color-border-light: #6f7f47;
+
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 2rem;
+  --spacing-lg: 4rem;
+  --spacing-xl: 8rem;
+
+  /* Constraints */
+  --container-max-width: 1200px;
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
