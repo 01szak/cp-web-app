@@ -241,11 +241,11 @@ export class AboutSectionComponent {
       title: 'Wspólne Ogniska'
     },
     {
-      url: 'gallery/lerzak.jpeg',
+      url: 'about/lerzak.jpeg',
       alt: 'Lerzak',
       title: 'Relaks'
     },
-    { url: 'gallery/main-page-photo1.jpg',
+    { url: 'about/lot-ptaka-campery.webp',
       alt: 'Camper Park z lotu ptaka',
       title: 'Lokalizacja'
     },
@@ -255,28 +255,34 @@ export class AboutSectionComponent {
       title: 'Nasze Parcele'
     },
     {
-      url: 'gallery/zima-drzewa-2.jpeg',
+      url: 'about/zima-drzewa-2.jpeg',
       alt: 'las',
       title: 'Zimowa Atomosfera'
     },
-    { url: 'gallery/gallery1.jpg',
+    { url: 'about/camper-park-wieczor-lot-ptaka.webp',
       alt: 'Widok panoramiczny',
       title: 'Nasz Park'
     },
   ];
 
   allGalleryPhotos: BentoPhoto[] = [
-    { url: 'gallery/gallery1.jpg', alt: 'Widok panoramiczny', title: 'Nasz Park' },
+    { url: 'about/camper-park-wieczor-lot-ptaka.webp', alt: 'Widok panoramiczny', title: 'Nasz Park' },
     { url: 'gallery/hamak.jpeg', alt: 'Relaks na hamaku', title: 'Strefa ciszy' },
-    { url: 'gallery/main-page-photo1.jpg', alt: 'Camper Park z lotu ptaka', title: 'Lokalizacja' },
-    { url: 'gallery/main-page-photo2.jpg', alt: 'Wieczorna atmosfera', title: 'Klimat' },
-    { url: 'gallery/main-page-photo3.jpg', alt: 'Przyroda Suwalszczyzny', title: 'Natura' },
+    { url: 'about/lot-ptaka-campery.webp', alt: 'Camper Park z lotu ptaka', title: 'Lokalizacja' },
+    { url: 'gallery/domek-noc.webp', alt: 'Wieczorna atmosfera', title: 'Klimat' },
+    { url: 'gallery/zdjecie-z-domkiem.webp', alt: 'Przyroda Suwalszczyzny', title: 'Natura' },
     { url: 'gallery/ognisko.jpeg', alt: 'Wspólne biesiadowanie', title: 'Integracja' },
     { url: 'gallery/parcele.jpeg', alt: 'Twoje miejsce na ziemi', title: 'Komfort' },
     { url: 'gallery/camperpark-noc.jpg', alt: 'Wieczór', title: 'Wieczory' },
-    { url: 'gallery/jezioro-i-krzesla.jpg', alt: 'Jezioro', title: 'Widok Na Jezioro' },
-    { url: 'gallery/zima-drzewa.jpeg', alt: 'Zima', title: 'Zima' },
-    { url: 'gallery/zima-drzewa-2.jpeg', alt: 'las', title: 'Zimowa Atomosfera' },
-    { url: 'gallery/lerzak.jpeg', alt: 'Lerzak', title: 'Relaks' },
+    { url: 'gallery/jezioro-i-krzesła.jpg', alt: 'Jezioro', title: 'Widok Na Jezioro' },
+    { url: 'about/zima-drzewa-2.jpeg', alt: 'las', title: 'Zimowa Atomosfera' },
+    { url: 'about/lerzak.jpeg', alt: 'Lerzak', title: 'Relaks' },
+    { url: 'gallery/lazienka1.jpeg', alt: 'Nowoczesne łazienki', title: 'Standard' },
+    { url: 'gallery/lazienka2.jpeg', alt: 'Czystość i komfort', title: 'Udogodnienia' },
+    { url: 'gallery/lazienka3.jpeg', alt: 'Zaplecze sanitarne', title: 'Sanitariaty' },
+    { url: 'gallery/campery.webp', alt: 'Nasze parcele z bliska', title: 'Caravaning' },
+    { url: 'gallery/puste-parcele-lot-ptaka.webp', alt: 'Plan pola', title: 'Przestrzeń' },
+    { url: 'gallery/zima-ognisko.webp', alt: 'Ognisko zimą', title: 'Zimowy klimat' },
+    { url: 'gallery/drzewa.webp', alt: 'Otoczenie drzew', title: 'Przyroda' },
   ];
 }

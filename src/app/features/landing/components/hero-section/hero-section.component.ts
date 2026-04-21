@@ -20,7 +20,7 @@ import { CommonModule } from '@angular/common';
           preload="auto"
           class="hero__video"
           [class.hero__video--hidden]="videoEnded"
-          poster="main/main-page-photo1.jpg"
+          poster="hero/camper-park-hero.jpg"
         >
           <source src="hero/horizontal-camper-park-cut-version.mp4" type="video/mp4">
         </video>
@@ -72,7 +72,7 @@ import { CommonModule } from '@angular/common';
       &__static-img {
         position: absolute;
         inset: 0;
-        background-image: url("/main/main-page-photo1.jpg");
+        background-image: url("/hero/camper-park-hero.jpg");
         background-size: cover;
         background-position: center;
         opacity: 0;
