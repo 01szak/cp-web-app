@@ -14,25 +14,25 @@ import { TranslationService } from '../../../core/services/translation.service';
             <h2 class="footer__title" id="footer-contact">CAMPER PARK STARY FOLWARK</h2>
             <p class="footer__text">{{ ts.t.footer.tagline }}</p>
           </div>
-          
+
           <div class="footer__col">
             <h3 class="footer__subtitle">{{ ts.t.footer.contact }}</h3>
             <ul class="footer__list">
               <li>Stary Folwark 55 c, 16-402 Suwałki</li>
-              <li>Tel: <a href="tel:+48123456789" class="footer__link">+48 123 456 789</a></li>
-              <li>Email: <a href="mailto:kontakt@staryfolwark.pl" class="footer__link">kontakt@staryfolwark.pl</a></li>
+              <li>Tel: <a href="tel:+48502024282" class="footer__link">+48 502 024 282</a></li>
+              <li>Email: <a href="mailto:camperpark.sfolwark@gmail.com" class="footer__link">camperpark.sfolwark@gmail.com</a></li>
             </ul>
           </div>
 
           <div class="footer__col">
             <h3 class="footer__subtitle">{{ ts.t.footer.socials }}</h3>
             <nav class="footer__socials" aria-label="Media społecznościowe">
-              <a href="#" class="footer__link" aria-label="Odwiedź nasz profil na Facebooku">Facebook</a>
-              <a href="#" class="footer__link" aria-label="Odwiedź nasz profil na Instagramie">Instagram</a>
+              <a href="https://www.facebook.com/p/Camper-Park-Stary-Folwark-100089541787101/" class="footer__link" aria-label="Odwiedź nasz profil na Facebooku">Facebook</a>
+              <a href="https://www.instagram.com/camper_park_stary_folwark/" class="footer__link" aria-label="Odwiedź nasz profil na Instagramie">Instagram</a>
             </nav>
           </div>
         </div>
-        
+
         <div class="footer__bottom">
           <p>&copy; 2026 {{ ts.t.footer.rights }}</p>
         </div>

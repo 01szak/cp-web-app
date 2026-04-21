@@ -33,19 +33,19 @@ export const TRANSLATIONS = {
       cta: 'PRZECZYTAJ WSZYSTKIE OPINIE',
       list: [
         {
-          author: "Marek Kowalski",
-          date: "2 tygodnie temu",
-          text: "Cudowne miejsce na odpoczynek. Cisza, spokój i niesamowity widok na jezioro Wigry. Infrastruktura na najwyższym poziomie."
+          author: "Majid Ershad",
+          date: "6 miesięcy temu",
+          text: "Absolutnie uwielbialiśmy nasz pobyt! Lokalizacja jest zachwycająca – cicha, spokojna i otoczona naturą. Widok na jezioro jest naprawdę wyjątkowy. Toalety i prysznice są pięknie zaprojektowane i nieskazitelnie czyste, a parking ma idealną wielkość i jest bardzo wygodny. Dziękujemy za tak relaksujące i niezapomniane wrażenia!"
         },
         {
-          author: "Anna Nowak",
-          date: "miesiąc temu",
-          text: "Najlepszy camper park na jakim byliśmy w Polsce. Bardzo czyste sanitariaty i miła obsługa. Na pewno wrócimy!"
+          author: "Mariusz Adams",
+          date: "4 tygodnie temu",
+          text: "Co tu dużo mówić trzeba tu być, słowami nie da się tego opisać PRZEPIĘKNIE miejsce, sanitariat, obsługa, właścicielka po prostu MAGIA, Dziękujemy i pozdrawiamy"
         },
         {
-          author: "Piotr Zieliński",
-          date: "2 miesiące temu",
-          text: "Świetna lokalizacja dla fanów wycieczek rowerowych. Parcele są przestronne i dobrze przygotowane pod cięższe kampery."
+          author: "Bernhard Kils",
+          date: "6 miesięcy temu",
+          text: "Piękny kemping tuż nad jeziorem! Wszystko na najwyższym poziomie! Doskonałe zaplecze sanitarne ze wszystkim, czego potrzebujesz. Bardzo przyjazny i pomocny właściciel! Gorąco polecam!"
         }
       ]
     },
@@ -144,19 +144,20 @@ export const TRANSLATIONS = {
       cta: 'READ ALL REVIEWS',
       list: [
         {
-          author: "Marek Kowalski",
-          date: "2 weeks ago",
-          text: "A wonderful place to relax. Silence, peace, and an amazing view of Lake Wigry. Infrastructure at the highest level."
+          author: "Majid Ershad",
+          date: "6 months ago",
+          text: "We absolutely loved our stay here! The location is stunning — quiet, peaceful, and surrounded by nature. The lake view is truly one of a kind. The toilets and showers are beautifully designed and spotless, and the parking area is just the right size and very convenient. Thank you for such a relaxing and unforgettable experience!",
         },
         {
-          author: "Anna Nowak",
-          date: "a month ago",
-          text: "The best camper park we have been to in Poland. Very clean sanitary facilities and friendly service. We will definitely be back!"
+          author: "Mariusz Adams",
+          date: "4 weeks ago",
+          text: "What more can I say, you have to be here, words cannot express it. BEAUTIFUL place, toilets, service, owner - simply MAGIC. Thank you and best regards."
+
         },
         {
-          author: "Piotr Zieliński",
-          date: "2 months ago",
-          text: "Great location for bike trip fans. Pitches are spacious and well-prepared for heavier campers."
+          author: "Bernhard Kils",
+          date: "6 months ago",
+          text: "A beautiful campsite right on the lake! Everything is top-notch! Excellent sanitary facilities with everything you need. Very friendly and helpful owner! Highly recommended!"
         }
       ]
     },

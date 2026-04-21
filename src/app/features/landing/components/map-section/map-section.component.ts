@@ -21,7 +21,7 @@ import { TranslationService } from '../../../../core/services/translation.servic
 
         <div class="map-container" appRevealOnScroll>
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2346.8524391219844!2d23.0583713774844!3d54.084344123512385!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46e10266107f9103%3A0x286e11419796e62c!2sStary%20Folwark%2055C%2C%2016-402%20Stary%20Folwark!5e0!3m2!1spl!2spl!4v1710710000000!5m2!1spl!2spl"
+            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2340.7822640734776!2d23.0807038!3d54.0776046!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46e0fd98c90cd77f%3A0xfe359f9345eee0b2!2sCamper%20Park%20Stary%20Folwark!5e0!3m2!1spl!2spl!4v1776804857276!5m2!1spl!2spl"
             width="100%"
             height="450"
             style="border:0;"

@@ -38,7 +38,7 @@ interface Opinion {
                   <time [attr.datetime]="opinion.date" class="opinion-card__date">{{ opinion.date }}</time>
                 </div>
                 <div class="opinion-card__stars" role="img" [attr.aria-label]="opinion.rating + ' na 5 gwiazdek'">
-                  @for (star of [1,2,3,4,5]; track star) {
+                  @for (star of [1,2,3,4]; track star) {
                     <span class="star" [class.star--filled]="star <= opinion.rating" aria-hidden="true">★</span>
                   }
                 </div>
@@ -51,7 +51,7 @@ interface Opinion {
         </div>
 
         <div class="opinions__cta text-center" appRevealOnScroll>
-          <a href="https://www.google.com/maps" target="_blank" rel="noopener" class="btn-outline">{{ ts.t.opinions.cta }}</a>
+          <a href="https://www.google.com/maps/place/Camper+Park+Stary+Folwark/@54.0776046,23.0807038,17z/data=!4m11!3m10!1s0x46e0fd98c90cd77f:0xfe359f9345eee0b2!5m2!4m1!1i2!8m2!3d54.0776015!4d23.0832787!9m1!1b1!16s%2Fg%2F11rxylnb1g?entry=ttu&g_ep=EgoyMDI2MDQxOS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener" class="btn-outline">{{ ts.t.opinions.cta }}</a>
         </div>
       </div>
     </section>
@@ -60,7 +60,7 @@ interface Opinion {
     .opinions {
       padding: var(--spacing-xl) 0;
       background-color: var(--color-bg-light-soft);
-      
+
       &__header { margin-bottom: var(--spacing-lg); }
     }
 
@@ -79,7 +79,7 @@ interface Opinion {
       justify-content: center;
       gap: 0.75rem;
       margin-top: 1rem;
-      
+
       .rating-score { font-size: 1.5rem; font-weight: 700; color: var(--color-text-dark); }
       .stars { color: #fbbc04; font-size: 1.25rem; }
       .reviews-count { color: var(--color-text-muted); font-size: 0.9rem; }
@@ -108,7 +108,7 @@ interface Opinion {
 
       &__author { font-weight: 700; display: block; color: var(--color-text-dark); }
       &__date { font-size: 0.8rem; color: var(--color-text-muted); }
-      
+
       &__stars {
         color: #fbbc04;
         .star { opacity: 0.2; &--filled { opacity: 1; } }
@@ -133,7 +133,7 @@ interface Opinion {
       font-weight: 700;
       border-radius: 4px;
       transition: var(--transition-smooth);
-      
+
       &:hover {
         background: var(--color-accent-gold);
         color: white;
