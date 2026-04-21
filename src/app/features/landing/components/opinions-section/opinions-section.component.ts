@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RevealOnScrollDirective } from '../../../../core/directives/reveal-on-scroll.directive';
+import { TranslationService } from '../../../../core/services/translation.service';
 
 interface Opinion {
   author: string;
@@ -14,41 +15,43 @@ interface Opinion {
   standalone: true,
   imports: [CommonModule, RevealOnScrollDirective],
   template: `
-    <section class="opinions" id="opinions">
+    <section class="opinions" id="opinions" aria-labelledby="opinions-title">
       <div class="container">
         <div class="opinions__header text-center" appRevealOnScroll>
-          <span class="subtitle">OPINIE NASZYCH GOŚCI</span>
-          <h2 class="title">Co mówią o nas w Google?</h2>
-          <div class="google-rating">
-            <span class="rating-score">4.9</span>
-            <div class="stars">
+          <span class="subtitle">{{ ts.t.opinions.subtitle }}</span>
+          <h2 class="title" id="opinions-title">{{ ts.t.opinions.title }}</h2>
+          <div class="google-rating" [attr.aria-label]="ts.t.opinions.ratingLabel">
+            <span class="rating-score" aria-hidden="true">4.9</span>
+            <div class="stars" role="img" aria-label="5 gwiazdek">
               <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
             </div>
-            <span class="reviews-count">(120+ opinii)</span>
+            <span class="reviews-count">{{ ts.t.opinions.reviewsCount }}</span>
           </div>
         </div>
 
         <div class="opinions__grid grid grid-3">
           @for (opinion of opinions; track $index) {
-            <div class="opinion-card" appRevealOnScroll>
+            <article class="opinion-card" appRevealOnScroll>
               <div class="opinion-card__header">
                 <div class="opinion-card__author-info">
                   <span class="opinion-card__author">{{ opinion.author }}</span>
-                  <span class="opinion-card__date">{{ opinion.date }}</span>
+                  <time [attr.datetime]="opinion.date" class="opinion-card__date">{{ opinion.date }}</time>
                 </div>
-                <div class="opinion-card__stars">
+                <div class="opinion-card__stars" role="img" [attr.aria-label]="opinion.rating + ' na 5 gwiazdek'">
                   @for (star of [1,2,3,4,5]; track star) {
-                    <span class="star" [class.star--filled]="star <= opinion.rating">★</span>
+                    <span class="star" [class.star--filled]="star <= opinion.rating" aria-hidden="true">★</span>
                   }
                 </div>
               </div>
-              <p class="opinion-card__text">"{{ opinion.text }}"</p>
-            </div>
+              <blockquote class="opinion-card__text">
+                <p>"{{ opinion.text }}"</p>
+              </blockquote>
+            </article>
           }
         </div>
 
         <div class="opinions__cta text-center" appRevealOnScroll>
-          <a href="https://www.google.com/maps" target="_blank" class="btn-outline">ZOBACZ WSZYSTKIE OPINIE</a>
+          <a href="https://www.google.com/maps" target="_blank" rel="noopener" class="btn-outline">{{ ts.t.opinions.cta }}</a>
         </div>
       </div>
     </section>
@@ -139,24 +142,12 @@ interface Opinion {
   `]
 })
 export class OpinionsSectionComponent {
-  opinions: Opinion[] = [
-    {
-      author: "Marek Kowalski",
-      rating: 5,
-      date: "2 tygodnie temu",
-      text: "Cudowne miejsce na odpoczynek. Cisza, spokój i niesamowity widok na jezioro Wigry. Infrastruktura na najwyższym poziomie."
-    },
-    {
-      author: "Anna Nowak",
-      rating: 5,
-      date: "miesiąc temu",
-      text: "Najlepszy camper park na jakim byliśmy w Polsce. Bardzo czyste sanitariaty i miła obsługa. Na pewno wrócimy!"
-    },
-    {
-      author: "Piotr Zieliński",
-      rating: 5,
-      date: "2 miesiące temu",
-      text: "Świetna lokalizacja dla fanów wycieczek rowerowych. Parcele są przestronne i dobrze przygotowane pod cięższe kampery."
-    }
-  ];
+  ts = inject(TranslationService);
+
+  get opinions(): Opinion[] {
+    return this.ts.t.opinions.list.map((o: any) => ({
+      ...o,
+      rating: 5 // Default rating if not in translation or keep it as is
+    }));
+  }
 }

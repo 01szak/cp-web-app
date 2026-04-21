@@ -1,50 +1,53 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RevealOnScrollDirective } from '../../../../core/directives/reveal-on-scroll.directive';
+import { TranslationService } from '../../../../core/services/translation.service';
 
 @Component({
   selector: 'app-map-section',
   standalone: true,
   imports: [CommonModule, RevealOnScrollDirective],
   template: `
-    <div class="map-section" id="location">
+    <section class="map-section" id="location" aria-labelledby="location-title">
       <div class="container">
         <div class="map-header text-center" appRevealOnScroll>
-          <span class="subtitle">DOJAZD</span>
-          <h2 class="title">Jak do nas trafić?</h2>
+          <span class="subtitle">{{ ts.t.location.subtitle }}</span>
+          <h2 class="title" id="location-title">{{ ts.t.location.title }}</h2>
           <p class="description">
             Stary Folwark 55 c, 16-402 Suwałki<br>
-            Serce Wigierskiego Parku Narodowego
+            <strong>{{ ts.t.location.description }}</strong>
           </p>
         </div>
 
         <div class="map-container" appRevealOnScroll>
-          <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2346.8524391219844!2d23.0583713774844!3d54.084344123512385!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46e10266107f9103%3A0x286e11419796e62c!2sStary%20Folwark%2055C%2C%2016-402%20Stary%20Folwark!5e0!3m2!1spl!2spl!4v1710710000000!5m2!1spl!2spl" 
-            width="100%" 
-            height="450" 
-            style="border:0;" 
-            allowfullscreen="" 
-            loading="lazy" 
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2346.8524391219844!2d23.0583713774844!3d54.084344123512385!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46e10266107f9103%3A0x286e11419796e62c!2sStary%20Folwark%2055C%2C%2016-402%20Stary%20Folwark!5e0!3m2!1spl!2spl!4v1710710000000!5m2!1spl!2spl"
+            width="100%"
+            height="450"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            title="Mapa Google z lokalizacją Camper Park Stary Folwark"
+            aria-label="Interaktywna mapa Google przedstawiająca lokalizację pola kempingowego"
             referrerpolicy="no-referrer-when-downgrade">
           </iframe>
         </div>
         <div class="location-details grid grid-3" appRevealOnScroll>
-          <div class="detail-item">
-            <h4 class="detail-title">Współrzędne GPS</h4>
+          <article class="detail-item">
+            <h3 class="detail-title">{{ ts.t.location.gps }}</h3>
             <p>54.0845° N, 23.0583° E</p>
-          </div>
-          <div class="detail-item">
-            <h4 class="detail-title">Odległość</h4>
+          </article>
+          <article class="detail-item">
+            <h3 class="detail-title">{{ ts.t.location.distance }}</h3>
             <p>Suwałki: 12 km<br>Augustów: 40 km</p>
-          </div>
-          <div class="detail-item">
-            <h4 class="detail-title">Otoczenie</h4>
-            <p>Jezioro Wigry: 200 m<br>Klasztor Kamedułów: 5 km</p>
-          </div>
+          </article>
+          <article class="detail-item">
+            <h3 class="detail-title">{{ ts.t.location.attractions }}</h3>
+            <p>Jezioro Wigry: 0 m<br>Klasztor Kamedułów: 5 km</p>
+          </article>
         </div>
       </div>
-    </div>
+    </section>
   `,
   styles: [`
     .map-section {
@@ -106,4 +109,6 @@ import { RevealOnScrollDirective } from '../../../../core/directives/reveal-on-s
     }
   `]
 })
-export class MapSectionComponent {}
+export class MapSectionComponent {
+  ts = inject(TranslationService);
+}

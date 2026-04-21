@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PhotoCollageComponent, CollagePhoto } from '../../../../shared/components/photo-collage/photo-collage.component';
 import { BentoBoxGalleryComponent, BentoPhoto } from '../../../../shared/components/bento-box-gallery/bento-box-gallery.component';
 import { RevealOnScrollDirective } from '../../../../core/directives/reveal-on-scroll.directive';
+import { TranslationService } from '../../../../core/services/translation.service';
 
 @Component({
   selector: 'app-about-section',
@@ -12,12 +13,12 @@ import { RevealOnScrollDirective } from '../../../../core/directives/reveal-on-s
     <div class="about" [class.content-blurred]="showFullBento">
       <div class="grid grid-2 about__header">
         <div appRevealOnScroll>
-          <span class="about__subtitle">NASZA HISTORIA</span>
-          <h2 class="about__title">Komfortowy wypoczynek blisko natury</h2>
+          <span class="about__subtitle">{{ ts.t.about.subtitle }}</span>
+          <h2 class="about__title">{{ ts.t.about.title }}</h2>
         </div>
         <div appRevealOnScroll class="about__text">
-          <p>Camper Park Stary Folwark to miejsce stworzone z pasji do podróżowania i miłości do Suwalszczyzny. Położony tuż nad brzegiem jeziora Wigry, oferuje idealne warunki dla miłośników caravaningu szukających spokoju i nowoczesnych udogodnień.</p>
-          <p>Nasza infrastruktura obejmuje utwardzone stanowiska, przyłącza prądu i wody, a także nowoczesne zaplecze sanitarne, zapewniając standard, którego oczekuje współczesny podróżnik.</p>
+          <p>{{ ts.t.about.text1 }}</p>
+          <p>{{ ts.t.about.text2 }}</p>
         </div>
       </div>
 
@@ -29,7 +30,7 @@ import { RevealOnScrollDirective } from '../../../../core/directives/reveal-on-s
         </app-photo-collage>
         <div class="about__actions" appRevealOnScroll>
           <button class="btn-show-more" (click)="toggleGallery(true)">
-            ZOBACZ PEŁNĄ GALERIĘ
+            {{ ts.t.about.cta }}
             <span class="btn-icon">→</span>
           </button>
         </div>
@@ -44,11 +45,11 @@ import { RevealOnScrollDirective } from '../../../../core/directives/reveal-on-s
         <div class="bento-overlay__content container">
           <div class="gallery-header">
             <div class="gallery-header__text">
-              <h3 class="gallery-title">Galeria Stary Folwark</h3>
-              <p class="gallery-subtitle">Każde zdjęcie to inna historia</p>
+              <h3 class="gallery-title">{{ ts.t.about.galleryTitle }}</h3>
+              <p class="gallery-subtitle">{{ ts.t.about.gallerySubtitle }}</p>
             </div>
             <button class="btn-close-gallery" (click)="toggleGallery(false)">
-              <span>ZAMKNIJ</span>
+              <span>{{ ts.t.about.close }}</span>
               <span class="close-icon">✕</span>
             </button>
           </div>
@@ -223,6 +224,7 @@ import { RevealOnScrollDirective } from '../../../../core/directives/reveal-on-s
   `]
 })
 export class AboutSectionComponent {
+  ts = inject(TranslationService);
   showFullBento = false;
 
   toggleGallery(show: boolean) {
@@ -234,55 +236,61 @@ export class AboutSectionComponent {
     }
   }
 
-  collagePhotos: CollagePhoto[] = [
-    {
-      url: 'about/ognisko.jpeg',
-      alt: 'Wieczorne ognisko',
-      title: 'Wspólne Ogniska'
-    },
-    {
-      url: 'about/lerzak.jpeg',
-      alt: 'Lerzak',
-      title: 'Relaks'
-    },
-    { url: 'about/lot-ptaka-campery.webp',
-      alt: 'Camper Park z lotu ptaka',
-      title: 'Lokalizacja'
-    },
-    {
-      url: 'about/parcele.jpeg',
-      alt: 'Przestronne parcele',
-      title: 'Nasze Parcele'
-    },
-    {
-      url: 'about/zima-drzewa-2.jpeg',
-      alt: 'las',
-      title: 'Zimowa Atomosfera'
-    },
-    { url: 'about/camper-park-wieczor-lot-ptaka.webp',
-      alt: 'Widok panoramiczny',
-      title: 'Nasz Park'
-    },
-  ];
+  get collagePhotos(): CollagePhoto[] {
+    const t = this.ts.t.gallery;
+    return [
+      {
+        url: 'about/ognisko.jpeg',
+        alt: t.alts.bonfire,
+        title: t.titles.bonfire
+      },
+      {
+        url: 'about/lerzak.jpeg',
+        alt: t.alts.relax,
+        title: t.titles.relax
+      },
+      { url: 'about/lot-ptaka-campery.webp',
+        alt: t.alts.location,
+        title: t.titles.location
+      },
+      {
+        url: 'about/parcele.jpeg',
+        alt: t.alts.pitches,
+        title: t.titles.pitches
+      },
+      {
+        url: 'about/zima-drzewa-2.jpeg',
+        alt: t.alts.winter,
+        title: t.titles.winter
+      },
+      { url: 'about/camper-park-wieczor-lot-ptaka.webp',
+        alt: t.alts.park,
+        title: t.titles.park
+      },
+    ];
+  }
 
-  allGalleryPhotos: BentoPhoto[] = [
-    { url: 'about/camper-park-wieczor-lot-ptaka.webp', alt: 'Widok panoramiczny', title: 'Nasz Park' },
-    { url: 'gallery/hamak.jpeg', alt: 'Relaks na hamaku', title: 'Strefa ciszy' },
-    { url: 'about/lot-ptaka-campery.webp', alt: 'Camper Park z lotu ptaka', title: 'Lokalizacja' },
-    { url: 'gallery/domek-noc.webp', alt: 'Wieczorna atmosfera', title: 'Klimat' },
-    { url: 'gallery/zdjecie-z-domkiem.webp', alt: 'Przyroda Suwalszczyzny', title: 'Natura' },
-    { url: 'gallery/ognisko.jpeg', alt: 'Wspólne biesiadowanie', title: 'Integracja' },
-    { url: 'gallery/parcele.jpeg', alt: 'Twoje miejsce na ziemi', title: 'Komfort' },
-    { url: 'gallery/camperpark-noc.jpg', alt: 'Wieczór', title: 'Wieczory' },
-    { url: 'gallery/jezioro-i-krzesła.jpg', alt: 'Jezioro', title: 'Widok Na Jezioro' },
-    { url: 'about/zima-drzewa-2.jpeg', alt: 'las', title: 'Zimowa Atomosfera' },
-    { url: 'about/lerzak.jpeg', alt: 'Lerzak', title: 'Relaks' },
-    { url: 'gallery/lazienka1.jpeg', alt: 'Nowoczesne łazienki', title: 'Standard' },
-    { url: 'gallery/lazienka2.jpeg', alt: 'Czystość i komfort', title: 'Udogodnienia' },
-    { url: 'gallery/lazienka3.jpeg', alt: 'Zaplecze sanitarne', title: 'Sanitariaty' },
-    { url: 'gallery/campery.webp', alt: 'Nasze parcele z bliska', title: 'Caravaning' },
-    { url: 'gallery/puste-parcele-lot-ptaka.webp', alt: 'Plan pola', title: 'Przestrzeń' },
-    { url: 'gallery/zima-ognisko.webp', alt: 'Ognisko zimą', title: 'Zimowy klimat' },
-    { url: 'gallery/drzewa.webp', alt: 'Otoczenie drzew', title: 'Przyroda' },
-  ];
+  get allGalleryPhotos(): BentoPhoto[] {
+    const t = this.ts.t.gallery;
+    return [
+      { url: 'about/camper-park-wieczor-lot-ptaka.webp', alt: t.alts.park, title: t.titles.park },
+      { url: 'gallery/hamak.jpeg', alt: t.alts.silence, title: t.titles.silence },
+      { url: 'about/lot-ptaka-campery.webp', alt: t.alts.location, title: t.titles.location },
+      { url: 'gallery/domek-noc.webp', alt: t.alts.climate, title: t.titles.climate },
+      { url: 'gallery/zdjecie-z-domkiem.webp', alt: t.alts.nature, title: t.titles.nature },
+      { url: 'gallery/ognisko.jpeg', alt: t.alts.integration, title: t.titles.integration },
+      { url: 'gallery/parcele.jpeg', alt: t.alts.comfort, title: t.titles.comfort },
+      { url: 'gallery/camperpark-noc.jpg', alt: t.alts.evenings, title: t.titles.evenings },
+      { url: 'gallery/jezioro-i-krzesła.jpg', alt: t.alts.lake, title: t.titles.lake },
+      { url: 'about/zima-drzewa-2.jpeg', alt: t.alts.winter, title: t.titles.winter },
+      { url: 'about/lerzak.jpeg', alt: t.alts.relax, title: t.titles.relax },
+      { url: 'gallery/lazienka1.jpeg', alt: t.alts.standard, title: t.titles.standard },
+      { url: 'gallery/lazienka2.jpeg', alt: t.alts.facilities, title: t.titles.facilities },
+      { url: 'gallery/lazienka3.jpeg', alt: t.alts.sanitary, title: t.titles.sanitary },
+      { url: 'gallery/campery.webp', alt: t.alts.caravaning, title: t.titles.caravaning },
+      { url: 'gallery/puste-parcele-lot-ptaka.webp', alt: t.alts.space, title: t.titles.space },
+      { url: 'gallery/zima-ognisko.webp', alt: t.alts.winterBonfire, title: t.titles.winterBonfire },
+      { url: 'gallery/drzewa.webp', alt: t.alts.nature, title: t.titles.nature },
+    ];
+  }
 }

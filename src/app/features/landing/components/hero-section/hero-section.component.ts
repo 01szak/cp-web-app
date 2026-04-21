@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslationService } from '../../../../core/services/translation.service';
 
 @Component({
   selector: 'app-hero-section',
@@ -28,16 +29,16 @@ import { CommonModule } from '@angular/common';
       </div>
 
       <div class="container hero__content">
-        <h1 class="hero__title">Camper Park<br><span>Stary Folwark</span></h1>
-        <p class="hero__tagline">Odkryj spokój w sercu Wigierskiego Parku Narodowego.</p>
+        <h1 class="hero__title">{{ ts.t.hero.title }}<br><span>{{ ts.t.hero.subtitle }}</span></h1>
+        <p class="hero__tagline">{{ ts.t.hero.tagline }}</p>
         <div class="hero__actions">
-          <button class="btn-primary" (click)="scrollTo('about')">POZNAJ NAS</button>
+          <button class="btn-primary" (click)="scrollTo('about')">{{ ts.t.hero.cta }}</button>
         </div>
       </div>
 
       <div class="hero__scroll-indicator" (click)="scrollTo('about')">
         <div class="mouse"></div>
-        <span>PRZEWIŃ</span>
+        <span>{{ ts.t.hero.scroll }}</span>
       </div>
     </section>
   `,
@@ -169,6 +170,7 @@ import { CommonModule } from '@angular/common';
   `]
 })
 export class HeroSectionComponent {
+  ts = inject(TranslationService);
   videoEnded = false;
 
   scrollTo(id: string) {
