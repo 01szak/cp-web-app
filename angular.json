@@ -33,7 +33,15 @@
             "server": "src/main.server.ts",
             "outputMode": "server",
             "security": {
-              "allowedHosts": []
+              "allowedHosts": [
+                "localhost",
+                "127.0.0.1",
+                "57.128.227.137",
+                "camperparkstaryfolwark.pl",
+                "www.camperparkstaryfolwark.pl",
+                "camperparkstaryfolwark.01szaklab.pl",
+                "www.camperparkstaryfolwark.01szaklab.pl",
+              ]
             },
             "ssr": {
               "entry": "src/server.ts"
