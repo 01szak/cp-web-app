@@ -18,8 +18,8 @@ export const TRANSLATIONS = {
     about: {
       subtitle: 'POZNAJ NASZ CAMPING',
       title: 'Komfortowy caravaning nad Jeziorem Wigry',
-      text1: 'Camper Park Stary Folwark to nowoczesne pole kamperowe i namiotowe stworzone z pasji do podróżowania. Nasza lokalizacja w otulinie Wigierskiego Parku Narodowego sprawia, że jesteśmy idealną bazą wypadową dla osób szukających ciszy, spokoju i bezpośredniego kontaktu z przyrodą Suwalszczyzny.',
-      text2: 'Oferujemy przestronne, utwardzone parcele dla kamperów i przyczep z pełnym dostępem do prądu wody. Nasz obiekt to nie tylko nocleg, to profesjonalne zaplecze sanitarne, strefa relaksu i miejsce, gdzie każdy pasjonat caravaningu poczuje się jak w domu.',
+      text1: 'Camper Park Stary Folwark to nowoczesne pole kamperowe stworzone z pasji do podróżowania. Nasza lokalizacja w otulinie Wigierskiego Parku Narodowego sprawia, że jesteśmy idealną bazą wypadową dla osób szukających ciszy, spokoju i bezpośredniego kontaktu z przyrodą Suwalszczyzny.',
+      text2: 'Oferujemy przestronne, utwardzone parcele dla kamperów i przyczep z pełnym dostępem do prądu. Nasz obiekt to nie tylko nocleg, to profesjonalne zaplecze sanitarne, strefa relaksu i miejsce, gdzie każdy pasjonat caravaningu poczuje się jak w domu.',
       cta: 'ZOBACZ PEŁNĄ GALERIĘ',
       galleryTitle: 'Galeria Stary Folwark',
       gallerySubtitle: 'Każde zdjęcie to inna historia',
@@ -170,7 +170,7 @@ export const TRANSLATIONS = {
       attractions: 'Nearby Attractions'
     },
     footer: {
-      tagline: 'Your oasis of peace by Lake Wigry. A modern camper and tent site with traditional Podlasie hospitality.',
+      tagline: 'Your oasis of peace by Lake Wigry. A modern camper site with traditional Podlasie hospitality.',
       contact: 'CONTACT & ADDRESS',
       socials: 'FOLLOW US',
       rights: 'Camper Park Stary Folwark. All rights reserved.'
