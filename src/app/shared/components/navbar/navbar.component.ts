@@ -17,9 +17,8 @@ import { TranslationService, Language } from '../../../core/services/translation
           <li class="navbar__item"><a (click)="scrollTo('about')" class="navbar__link">{{ ts.t.nav.about }}</a></li>
           <li class="navbar__item"><a (click)="scrollTo('opinions')" class="navbar__link">{{ ts.t.nav.opinions }}</a></li>
           <li class="navbar__item"><a (click)="scrollTo('location')" class="navbar__link">{{ ts.t.nav.location }}</a></li>
-          <li class="navbar__item"><a (click)="scrollTo('gallery')" class="navbar__link">{{ ts.t.nav.gallery }}</a></li>
           <li class="navbar__item"><a (click)="scrollTo('contact')" class="navbar__link">{{ ts.t.nav.contact }}</a></li>
-          
+
           <li class="navbar__item navbar__language-switcher">
             <button (click)="ts.setLanguage('pl')" [class.active]="ts.currentLang() === 'pl'">PL</button>
             <span class="divider">|</span>
@@ -31,9 +30,9 @@ import { TranslationService, Language } from '../../../core/services/translation
           </li>
         </ul>
 
-        <button 
-          class="navbar__hamburger" 
-          (click)="toggleMobileMenu()" 
+        <button
+          class="navbar__hamburger"
+          (click)="toggleMobileMenu()"
           [class.navbar__hamburger--active]="isMobileMenuOpen"
           [attr.aria-label]="isMobileMenuOpen ? 'Zamknij menu' : 'Otwórz menu'"
           [attr.aria-controls]="'navbar-links'">
@@ -55,9 +54,9 @@ export class NavbarComponent {
   @HostListener('window:scroll', [])
   onWindowScroll() {
     const st = window.pageYOffset || document.documentElement.scrollTop;
-    
+
     this.isAtTop = st < 50;
-    
+
     if (Math.abs(this.lastScrollTop - st) <= 5) return;
 
     this.isScrolledDown = st > this.lastScrollTop && st > 80;
@@ -89,7 +88,7 @@ export class NavbarComponent {
         });
       }
     }
-    
+
     if (this.isMobileMenuOpen) {
       this.toggleMobileMenu();
     }

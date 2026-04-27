@@ -8,26 +8,7 @@ import { TranslationService } from '../../../../core/services/translation.servic
   imports: [CommonModule],
   template: `
     <section class="hero">
-      <div class="hero__video-container">
-        <!-- Static Image fallback/end-state -->
-        <div class="hero__static-img" [class.hero__static-img--visible]="videoEnded"></div>
-
-        <video
-          #heroVideo
-          autoplay
-          muted
-          loop
-          playsinline
-          preload="auto"
-          class="hero__video"
-          [class.hero__video--hidden]="videoEnded"
-          poster="hero/camper-park-hero.jpg"
-        >
-          <source src="hero/horizontal-camper-park-cut-version.mp4" type="video/mp4">
-        </video>
-        <div class="hero__overlay"></div>
-      </div>
-
+      <div class="hero__static-img"></div>
       <div class="container hero__content">
         <h1 class="hero__title">{{ ts.t.hero.title }}<br><span>{{ ts.t.hero.subtitle }}</span></h1>
         <p class="hero__tagline">{{ ts.t.hero.tagline }}</p>
@@ -52,34 +33,12 @@ import { TranslationService } from '../../../../core/services/translation.servic
       color: white;
       overflow: hidden;
 
-      &__video-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-      }
-
-      &__video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: opacity 2s ease;
-
-        &--hidden { opacity: 0; }
-      }
-
       &__static-img {
         position: absolute;
         inset: 0;
-        background-image: url("/hero/camper-park-hero.jpg");
+        background-image: url("/gallery/puste-parcele-lot-ptaka.webp");
         background-size: cover;
         background-position: center;
-        opacity: 0;
-        transition: opacity 2s ease;
-
-        &--visible { opacity: 1; }
       }
 
       &__overlay {
@@ -171,7 +130,6 @@ import { TranslationService } from '../../../../core/services/translation.servic
 })
 export class HeroSectionComponent {
   ts = inject(TranslationService);
-  videoEnded = false;
 
   scrollTo(id: string) {
     const element = document.getElementById(id);

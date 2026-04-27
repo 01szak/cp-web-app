@@ -14,7 +14,7 @@ import { TranslationService } from '../../../../core/services/translation.servic
           <span class="subtitle">{{ ts.t.location.subtitle }}</span>
           <h2 class="title" id="location-title">{{ ts.t.location.title }}</h2>
           <p class="description">
-            Stary Folwark 55 c, 16-402 Suwałki<br>
+            Stary Folwark 55C, 16-402 Suwałki<br>
             <strong>{{ ts.t.location.description }}</strong>
           </p>
         </div>

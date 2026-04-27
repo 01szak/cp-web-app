@@ -288,7 +288,7 @@ export class AboutSectionComponent {
       { url: 'gallery/lazienka2.jpeg', alt: t.alts.facilities, title: t.titles.facilities },
       { url: 'gallery/lazienka3.jpeg', alt: t.alts.sanitary, title: t.titles.sanitary },
       { url: 'gallery/campery.webp', alt: t.alts.caravaning, title: t.titles.caravaning },
-      { url: 'gallery/puste-parcele-lot-ptaka.webp', alt: t.alts.space, title: t.titles.space },
+      { url: 'hero/camperp-park-hero.jpg', alt: t.alts.space, title: t.titles.space },
       { url: 'gallery/zima-ognisko.webp', alt: t.alts.winterBonfire, title: t.titles.winterBonfire },
       { url: 'gallery/drzewa.webp', alt: t.alts.nature, title: t.titles.nature },
     ];

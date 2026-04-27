@@ -9,13 +9,15 @@
   z-index: 1000;
   transition: transform 0.4s ease-in-out, background-color 0.3s ease;
   padding: 1.5rem 0;
-
+  .navbar__link {
+    color: var(--color-text-light);
+  }
   &--scrolled {
     background-color: rgba(42, 51, 27, 0.95);
     backdrop-filter: blur(10px);
     padding: 1rem 0;
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    
+
     .navbar__logo {
       color: var(--color-text-light);
     }
@@ -59,7 +61,7 @@
     letter-spacing: 1px;
     color: var(--color-text-light);
     cursor: pointer;
-    
+
     &:hover {
       color: var(--color-accent-gold);
     }
@@ -149,7 +151,7 @@
 
   .navbar__item {
     margin-bottom: 2rem;
-    
+
     &--cta {
       margin-top: 1rem;
     }

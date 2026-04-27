@@ -38,7 +38,7 @@ interface Opinion {
                   <time [attr.datetime]="opinion.date" class="opinion-card__date">{{ opinion.date }}</time>
                 </div>
                 <div class="opinion-card__stars" role="img" [attr.aria-label]="opinion.rating + ' na 5 gwiazdek'">
-                  @for (star of [1,2,3,4]; track star) {
+                  @for (star of [1,2,3,4,5]; track star) {
                     <span class="star" [class.star--filled]="star <= opinion.rating" aria-hidden="true">★</span>
                   }
                 </div>

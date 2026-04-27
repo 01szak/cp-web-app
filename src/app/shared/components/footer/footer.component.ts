@@ -18,8 +18,11 @@ import { TranslationService } from '../../../core/services/translation.service';
           <div class="footer__col">
             <h3 class="footer__subtitle">{{ ts.t.footer.contact }}</h3>
             <ul class="footer__list">
-              <li>Stary Folwark 55 c, 16-402 Suwałki</li>
-              <li>Tel: <a href="tel:+48502024282" class="footer__link">+48 502 024 282</a></li>
+              <li>Stary Folwark 55C, 16-402 Suwałki</li>
+              <li>Tel:
+                <ul><a href="tel:+48662666450" class="footer__link">+48   662 666 450</a></ul>
+                <ul><a href="tel:+48608816587" class="footer__link">+48 608 816 587</a></ul>
+              </li>
               <li>Email: <a href="mailto:camperpark.sfolwark@gmail.com" class="footer__link">camperpark.sfolwark@gmail.com</a></li>
             </ul>
           </div>
