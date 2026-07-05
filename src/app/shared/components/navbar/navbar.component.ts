@@ -1,6 +1,6 @@
 import { Component, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslationService, Language } from '../../../core/services/translation.service';
+import { TranslationService} from '../../../core/services/translation.service';
 import { RouterLink } from '@angular/router';
 
 @Component({
