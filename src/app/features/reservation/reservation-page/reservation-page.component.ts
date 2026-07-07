@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, SimpleChanges } from '@angular/core';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 import { SectionComponent } from '../../../shared/components/section/section.component';
@@ -49,36 +49,68 @@ import { GuestFormComponent } from '../components/guest-form.component/guest-for
             </mat-card>
 
             <button class="btn-primary" (click)="enableForm()">Przejdź do rezerwacji</button>
+          } @else if (isAuthoriseMessage) {
+            <div class="final-info">
+              <h3>Na podany adres został wysłany mail weryfikacyjny</h3>
+              <p>
+                Nie dostałeś maila? Odczekaj {{ resendEmailRemainingSeconds() }} sekund i spróbuj
+                ponownie
+              </p>
+              <button
+                class="btn-outline"
+                (click)="createReservation()"
+                [disabled]="resendEmailRemainingSeconds() !== 0"
+              >
+                Wyślij ponownie
+              </button>
+            </div>
           } @else {
             <mat-card class="form-container ">
               <div class="form-content">
-                @if (!isSecondForm) {
-                  <app-reservation-form />
+                @if (!isGuestForm) {
+                  <app-reservation-form
+                    (formValid)="isReservationFormValid.set($event)"
+                    (formValue)="reservationForm.set($event)"
+                  />
                 } @else {
-                  <app-guest-form />
+                  <app-guest-form
+                    (formValid)="isGuestFormValid.set($event)"
+                    (formValue)="guestForm.set($event)"
+                  />
                 }
               </div>
             </mat-card>
 
             <section class="form-btn-section">
-              <button class="btn-outline" (click)="isSecondForm ? switchForms() : enableForm()">
+              <button class="btn-outline" (click)="isGuestForm ? switchForms() : enableForm()">
                 Cofnij
               </button>
 
               <button
                 class="btn-primary"
-                (click)="isSecondForm ? createReservation() : switchForms()"
+                (click)="isGuestForm ? createReservation() : switchForms()"
+                [disabled]="isGuestForm ? !isGuestFormValid() : !isReservationFormValid()"
               >
-                {{ isSecondForm ? 'Wyślij' : 'Kontynuuj' }}
+                {{ isGuestForm ? 'Wyślij' : 'Kontynuuj' }}
               </button>
             </section>
           }
         </div>
+        @if (wipOutput !== '') {
+          {{ wipOutput }}
+        }
       </app-section>
     </main>
     <app-footer></app-footer>
   `,
   styles: `
+    .final-info {
+      width: 100%;
+      height: 100%;
+      padding: 10px;
+      border: solid 1px black;
+    }
+
     .form-content {
       height: 100%;
       padding: 20px 10px 10px 10px;
@@ -120,19 +152,45 @@ import { GuestFormComponent } from '../components/guest-form.component/guest-for
   `,
 })
 export class ReservationPageComponent {
-  protected isSecondForm: boolean = false;
-
+  protected isGuestForm: boolean = false;
   protected isFormEnabled: boolean = false;
+  protected isAuthoriseMessage: boolean = false;
+  protected isReservationFormValid = signal<boolean>(false);
+  protected isGuestFormValid = signal<boolean>(false);
+  protected reservationForm = signal<any>(null);
+  protected guestForm = signal<any>(null);
+  protected resendEmailRemainingSeconds = signal<number>(60);
+
+  protected wipOutput = '';
 
   protected switchForms() {
-    this.isSecondForm = !this.isSecondForm;
+    this.isGuestForm = !this.isGuestForm;
   }
 
-  protected routeToHomePage() {}
-
-  protected createReservation() {}
+  protected createReservation() {
+    const payload = {
+      ...this.reservationForm(),
+      ...this.guestForm(),
+    };
+    this.wipOutput = JSON.stringify(payload);
+    this.isAuthoriseMessage = true;
+    this.startResendCounter();
+  }
 
   protected enableForm() {
     this.isFormEnabled = !this.isFormEnabled;
+  }
+
+  private startResendCounter() {
+    this.resendEmailRemainingSeconds.set(60);
+
+    const intervalId = setInterval(() => {
+      this.resendEmailRemainingSeconds.update(v => v - 1);
+      console.log(this.resendEmailRemainingSeconds);
+
+      if (this.resendEmailRemainingSeconds() <= 0) {
+        clearInterval(intervalId);
+      }
+    }, 1000);
   }
 }

@@ -77,10 +77,15 @@ img {
   transition: var(--transition-smooth);
   display: inline-block;
 
-  &:hover {
+  &:disabled {
+    background: var(--color-accent-gold-disabled);
+  }
+
+  &:not(:disabled):hover {
     background-color: var(--color-accent-hover);
     transform: translateY(-2px);
   }
+
 }
 .btn-outline {
   background-color: transparent;
@@ -92,7 +97,11 @@ img {
   border-radius: 4px;
   transition: var(--transition-smooth);
 
-  &:hover {
+  &:disabled {
+    border: 2px solid rgb(0 0 0 / 0.5);
+    color: rgb(0 0 0 / 0.5);
+  }
+  &:not(:disabled):hover {
     background: var(--color-accent-gold);
     transform: translateY(-2px);
     color: white;
