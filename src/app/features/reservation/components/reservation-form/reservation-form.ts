@@ -1,4 +1,5 @@
 import { Component, computed, effect, inject, output, signal } from '@angular/core';
+import { TranslationService } from '../../../../core/services/translation.service';
 import { FaIconComponent, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { MatCard } from '@angular/material/card';
 import {
@@ -36,16 +37,16 @@ import { form, FormField, required } from '@angular/forms/signals';
     MatError,
   ],
   template: `
-    <h3>Podaj parcele i czas pobytu</h3>
+    <h3>{{ ts.t.reservation.step1Title }}</h3>
     <form class="form-layout gap">
       <mat-form-field appearance="outline">
-        <mat-label>Wybierz parcele</mat-label>
+        <mat-label>{{ ts.t.reservation.selectPitch }}</mat-label>
         <mat-select aria-label="camper place select" [formField]="reservationForm.camperPlace">
           @for (cp of camperPlaces; track cp) {
             <mat-option [value]="cp.name">
               <p>parcela: {{ cp.name }}</p>
               <p>
-                (cena za dobe: <strong> {{ cp.price }} zł</strong>)
+                ({{ ts.t.reservation.pitchPriceLabel }} <strong> {{ cp.price }} {{ ts.t.reservation.currency }}</strong>)
               </p>
             </mat-option>
           }
@@ -58,11 +59,11 @@ import { form, FormField, required } from '@angular/forms/signals';
         }
       </mat-form-field>
 
-      <mat-form-field class="datepicker" appearance="outline" (click)="toggle._open($event)">
+      <mat-form-field class="datepicker" appearance="outline" (click)="dp.open()">
         <mat-label>{{
-          isCamperPlaceSelected() ? 'Wybierz termin' : 'Najpierw wybierz parcele'
+          isCamperPlaceSelected() ? ts.t.reservation.selectDates : ts.t.reservation.selectPitchFirst
         }}</mat-label>
-        <mat-hint>Wyszarzona data oznacza że parcela jest niedostępna</mat-hint>
+        <mat-hint>{{ ts.t.reservation.disabledDatesHint }}</mat-hint>
 
         <mat-date-range-input
           [dateFilter]="occupiedDateFilter"
@@ -87,7 +88,7 @@ import { form, FormField, required } from '@angular/forms/signals';
           (reservationForm.checkinDate().touched() || reservationForm.checkoutDate().touched()) &&
           (isCheckinInvalid() || isCheckoutInvalid())
         ) {
-          <mat-error>Wybierz poprawny zakres dat</mat-error>
+          <mat-error>{{ ts.t.reservation.invalidDateRange }}</mat-error>
         }
       </mat-form-field>
 
@@ -95,15 +96,13 @@ import { form, FormField, required } from '@angular/forms/signals';
         <div class="final-price-text-wrapper">
           <fa-icon
             [icon]="['fas', 'circle-question']"
-            matTooltip="Przedstawiona cena jest tylko ceną poglądową,
-                 na poziomie rezerwacji online nie uiszczasz żadnych opłat,
-                  zostaną one pobrane dopiero na miejscu przy kasie"
+            [matTooltip]="ts.t.reservation.priceTooltip"
           ></fa-icon>
-          <p class="final-price-text">Sugerowana cena:</p>
+          <p class="final-price-text">{{ ts.t.reservation.suggestedPrice }}</p>
         </div>
         <mat-card class="final-price-number">
           <p class="final-price-text">
-            <strong>{{ calculatedPrice }} zł</strong>
+            <strong>{{ calculatedPrice }} {{ ts.t.reservation.currency }}</strong>
           </p>
         </mat-card>
       </div>
@@ -216,14 +215,15 @@ export class ReservationForm {
     checkoutDate: Date | null;
   }>();
 
+  protected readonly ts = inject(TranslationService);
+  private readonly faIconLibrary = inject(FaIconLibrary);
+
   constructor() {
     effect(() => {
       this.formValid.emit(this.areAllFieldsValid());
       this.formValue.emit(this.reservationModel());
     });
   }
-
-  private readonly faIconLibrary = inject(FaIconLibrary);
 
   public ngOnInit() {
     this.faIconLibrary.addIcons(faCircleQuestion);
@@ -246,9 +246,9 @@ export class ReservationForm {
   });
 
   protected reservationForm = form(this.reservationModel, (schema) => {
-    required(schema.camperPlace, { message: 'Wybór parceli jest wymagany' });
-    required(schema.checkinDate, { message: 'Wybierz datę przyjazdu' });
-    required(schema.checkoutDate, { message: 'Wybierz datę wyjazdu' });
+    required(schema.camperPlace, { message: this.ts.t.reservation.validation.pitchRequired });
+    required(schema.checkinDate, { message: this.ts.t.reservation.validation.checkinRequired });
+    required(schema.checkoutDate, { message: this.ts.t.reservation.validation.checkoutRequired });
   });
 
   protected calculatedPrice: number = 12;

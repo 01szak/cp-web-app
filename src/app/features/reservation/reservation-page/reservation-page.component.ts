@@ -1,21 +1,13 @@
-import { Component, inject, OnInit, signal, SimpleChanges } from '@angular/core';
+import { Component, inject, OnDestroy, signal } from '@angular/core';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 import { SectionComponent } from '../../../shared/components/section/section.component';
-import {MatOption, MatSelect, MatSuffix } from '@angular/material/select';
 import { MatCard } from '@angular/material/card';
-import { MatFormField, MatLabel} from '@angular/material/form-field';
-import {
-  MatDatepickerToggle,
-  MatDateRangeInput,
-  MatDateRangePicker,
-  MatEndDate,
-  MatStartDate,
-} from '@angular/material/datepicker';
 import {ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { ReservationForm } from '../components/reservation-form/reservation-form';
 import { GuestFormComponent } from '../components/guest-form.component/guest-form.component';
+import { TranslationService } from '../../../core/services/translation.service';
 
 @Component({
   selector: 'app-reservation-page',
@@ -36,84 +28,107 @@ import { GuestFormComponent } from '../components/guest-form.component/guest-for
         <div>
           @if (!isFormEnabled) {
             <div>
-              <h3>Tu możesz dokonać rezerwacji swojego pobytu</h3>
-              <p>Poniżej znajduje się mapę naszego obiektu.</p>
-              <p>
-                Kliknij przycisk
-                <strong>'Przejdź do rezerwacji'</strong> aby wypełnić formularz
-              </p>
+              <h2>{{ ts.t.reservation.introTitle }}</h2>
+              <p>{{ ts.t.reservation.introDesc }}</p>
             </div>
 
             <mat-card>
               <img class="map-image" src="/camperpark-map.jpg" alt="camper-park-map" />
             </mat-card>
 
-            <button class="btn-primary" (click)="enableForm()">Przejdź do rezerwacji</button>
-          } @else if (isAuthoriseMessage) {
-            <div class="final-info">
-              <h3>Na podany adres został wysłany mail weryfikacyjny</h3>
-              <p>
-                Nie dostałeś maila? Odczekaj {{ resendEmailRemainingSeconds() }} sekund i spróbuj
-                ponownie
-              </p>
-              <button
-                class="btn-outline"
-                (click)="createReservation()"
-                [disabled]="resendEmailRemainingSeconds() !== 0"
-              >
-                Wyślij ponownie
-              </button>
-            </div>
+            <button class="btn-primary" (click)="enableForm()">{{ ts.t.reservation.startBtn }}</button>
           } @else {
-            <mat-card class="form-container ">
+            <mat-card class="form-container">
               <div class="form-content">
-                @if (!isGuestForm) {
-                  <app-reservation-form
-                    (formValid)="isReservationFormValid.set($event)"
-                    (formValue)="reservationForm.set($event)"
-                  />
-                } @else {
-                  <app-guest-form
-                    (formValid)="isGuestFormValid.set($event)"
-                    (formValue)="guestForm.set($event)"
-                  />
-                }
+                <div class="form-slider-wrapper">
+                  <div
+                    class="form-slider"
+                    [class.slide-step-1]="!isGuestForm && !isAuthoriseMessage"
+                    [class.slide-step-2]="isGuestForm && !isAuthoriseMessage"
+                    [class.slide-step-3]="isAuthoriseMessage"
+                  >
+                    <div class="slide-pane">
+                      <app-reservation-form
+                        (formValid)="isReservationFormValid.set($event)"
+                        (formValue)="reservationForm.set($event)"
+                      />
+                    </div>
+                    <div class="slide-pane">
+                      <app-guest-form
+                        (formValid)="isGuestFormValid.set($event)"
+                        (formValue)="guestForm.set($event)"
+                      />
+                    </div>
+                    <div class="slide-pane verification-pane">
+                      <div>
+                        <h2>{{ ts.t.reservation.verificationTitle }}</h2>
+                        <h3>{{ ts.t.reservation.verificationDesc }}</h3>
+                      </div>
+                      <div class="confirmation-buttons">
+                        <p>
+                          {{ ts.t.reservation.noEmailPrefix }} <strong>{{ resendEmailRemainingSeconds() }}</strong> {{ ts.t.reservation.noEmailSuffix }}
+                        </p>
+                        <button
+                          class="btn-outline"
+                          (click)="createReservation()"
+                          [disabled]="resendEmailRemainingSeconds() !== 0"
+                        >
+                          {{ ts.t.reservation.resendBtn }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </mat-card>
 
-            <section class="form-btn-section">
-              <button class="btn-outline" (click)="isGuestForm ? switchForms() : enableForm()">
-                Cofnij
-              </button>
+            @if (!isAuthoriseMessage) {
+              <section class="form-btn-section">
+                <button class="btn-outline" (click)="isGuestForm ? switchForms() : enableForm()">
+                  {{ ts.t.reservation.backBtn }}
+                </button>
 
-              <button
-                class="btn-primary"
-                (click)="isGuestForm ? createReservation() : switchForms()"
-                [disabled]="isGuestForm ? !isGuestFormValid() : !isReservationFormValid()"
-              >
-                {{ isGuestForm ? 'Wyślij' : 'Kontynuuj' }}
-              </button>
-            </section>
+                <button
+                  class="btn-primary"
+                  (click)="isGuestForm ? createReservation() : switchForms()"
+                  [disabled]="isGuestForm ? !isGuestFormValid() : !isReservationFormValid()"
+                >
+                  {{ isGuestForm ? ts.t.reservation.sendBtn : ts.t.reservation.nextBtn }}
+                </button>
+              </section>
+            }
           }
         </div>
-        @if (wipOutput !== '') {
-          {{ wipOutput }}
-        }
+<!--        @if (wipOutput !== '') {-->
+<!--          {{ wipOutput }}-->
+<!--        }-->
       </app-section>
     </main>
     <app-footer></app-footer>
   `,
   styles: `
+    .confirmation-buttons {
+      width: 100%;
+    }
+
+    .confirmation-dialog {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
     .final-info {
       width: 100%;
       height: 100%;
       padding: 10px;
       border: solid 1px black;
+      padding: 10px;
     }
 
     .form-content {
       height: 100%;
-      padding: 20px 10px 10px 10px;
+      padding: 0;
+      overflow: hidden;
     }
 
     .form-container {
@@ -124,6 +139,66 @@ import { GuestFormComponent } from '../components/guest-form.component/guest-for
       max-width: 800px;
       min-height: 500px;
       place-self: center;
+      overflow: hidden;
+    }
+
+    .form-slider-wrapper {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .form-slider {
+      display: flex;
+      width: 300%;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
+    }
+
+    .slide-pane {
+      width: 33.333%;
+      height: 100%;
+      flex-shrink: 0;
+      box-sizing: border-box;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+      padding: 20px 10px 10px 10px;
+    }
+
+    .verification-pane {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 15px;
+      height: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .verification-pane {
+        flex-direction: row;
+        gap: 10px;
+      }
+    }
+
+    .form-slider.slide-step-1 {
+      transform: translateX(0%);
+    }
+
+    .form-slider.slide-step-2 {
+      transform: translateX(-33.333%);
+    }
+
+    .form-slider.slide-step-3 {
+      transform: translateX(-66.666%);
+    }
+
+    .form-slider.slide-step-1 .slide-pane:nth-child(1),
+    .form-slider.slide-step-2 .slide-pane:nth-child(2),
+    .form-slider.slide-step-3 .slide-pane:nth-child(3) {
+      opacity: 1;
+      visibility: visible;
     }
 
     form {
@@ -151,7 +226,9 @@ import { GuestFormComponent } from '../components/guest-form.component/guest-for
     }
   `,
 })
-export class ReservationPageComponent {
+export class ReservationPageComponent implements OnDestroy {
+  protected ts = inject(TranslationService);
+  private resendIntervalId: any = null;
   protected isGuestForm: boolean = false;
   protected isFormEnabled: boolean = false;
   protected isAuthoriseMessage: boolean = false;
@@ -181,15 +258,25 @@ export class ReservationPageComponent {
     this.isFormEnabled = !this.isFormEnabled;
   }
 
+  ngOnDestroy() {
+    if (this.resendIntervalId) {
+      clearInterval(this.resendIntervalId);
+    }
+  }
+
   private startResendCounter() {
+    if (this.resendIntervalId) {
+      clearInterval(this.resendIntervalId);
+    }
     this.resendEmailRemainingSeconds.set(60);
 
-    const intervalId = setInterval(() => {
-      this.resendEmailRemainingSeconds.update(v => v - 1);
+    this.resendIntervalId = setInterval(() => {
+      this.resendEmailRemainingSeconds.update((v) => v - 1);
       console.log(this.resendEmailRemainingSeconds);
 
       if (this.resendEmailRemainingSeconds() <= 0) {
-        clearInterval(intervalId);
+        clearInterval(this.resendIntervalId);
+        this.resendIntervalId = null;
       }
     }, 1000);
   }

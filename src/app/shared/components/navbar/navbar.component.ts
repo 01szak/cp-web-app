@@ -1,7 +1,7 @@
 import { Component, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslationService} from '../../../core/services/translation.service';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -10,8 +10,8 @@ import { RouterLink } from '@angular/router';
   template: `
     <nav
       class="navbar"
-      [class.navbar--hidden]="isScrolledDown && !isMobileMenuOpen"
-      [class.navbar--scrolled]="!isAtTop"
+      [class.navbar--hidden]="isScrolledDown && !isMobileMenuOpen && !isReservationPage()"
+      [class.navbar--scrolled]="!isAtTop || isReservationPage()"
       role="navigation"
       aria-label="Menu główne"
     >
@@ -49,9 +49,15 @@ import { RouterLink } from '@angular/router';
           </li>
 
           <li class="navbar__item navbar__item--cta">
-            <button class="btn-primary" [routerLink]="['/reservation']" aria-label="Zarezerwuj miejsce">
-              {{ ts.t.nav.book }}
-            </button>
+            @if (isReservationPage()) {
+              <button class="btn-primary" [routerLink]="['/']" aria-label="Strona główna">
+                {{ ts.t.nav.home }}
+              </button>
+            } @else {
+              <button class="btn-primary" [routerLink]="['/reservation']" aria-label="Zarezerwuj miejsce">
+                {{ ts.t.nav.book }}
+              </button>
+            }
           </li>
         </ul>
 
@@ -76,6 +82,7 @@ import { RouterLink } from '@angular/router';
 })
 export class NavbarComponent {
   ts = inject(TranslationService);
+  router = inject(Router);
   isScrolledDown = false;
   isAtTop = true;
   isMobileMenuOpen = false;
@@ -100,7 +107,27 @@ export class NavbarComponent {
     }
   }
 
+  isReservationPage(): boolean {
+    return this.router.url.startsWith('/reservation');
+  }
+
   scrollTo(id: string) {
+    if (this.isReservationPage()) {
+      this.router.navigate(['/']).then(() => {
+        setTimeout(() => {
+          this.scrollAfterRedirect(id);
+        }, 100);
+      });
+    } else {
+      this.scrollAfterRedirect(id);
+    }
+
+    if (this.isMobileMenuOpen) {
+      this.toggleMobileMenu();
+    }
+  }
+
+  private scrollAfterRedirect(id: string) {
     if (id === 'top') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
@@ -117,10 +144,6 @@ export class NavbarComponent {
           behavior: 'smooth',
         });
       }
-    }
-
-    if (this.isMobileMenuOpen) {
-      this.toggleMobileMenu();
     }
   }
 }
