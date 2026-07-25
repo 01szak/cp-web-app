@@ -15,6 +15,22 @@ import { MatSelect } from '@angular/material/select';
 import { MatTooltip } from '@angular/material/tooltip';
 import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons/faCircleQuestion';
 import { form, FormField, required } from '@angular/forms/signals';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+
+export interface CamperPlaceTypeDTO {
+  id: number,
+  typeName: string,
+  price: number
+}
+
+export interface CamperPlaceDTO {
+  id: number,
+  index: string,
+  type: CamperPlaceTypeDTO,
+  price: number;
+}
 
 @Component({
   selector: 'app-reservation-form',
@@ -35,20 +51,34 @@ import { form, FormField, required } from '@angular/forms/signals';
     MatTooltip,
     FormField,
     MatError,
+    MatProgressSpinner,
   ],
   template: `
     <h3>{{ ts.t.reservation.step1Title }}</h3>
     <form class="form-layout gap">
       <mat-form-field appearance="outline">
         <mat-label>{{ ts.t.reservation.selectPitch }}</mat-label>
-        <mat-select aria-label="camper place select" [formField]="reservationForm.camperPlace">
-          @for (cp of camperPlaces; track cp) {
-            <mat-option [value]="cp.name">
-              <p>parcela: {{ cp.name }}</p>
-              <p>
-                ({{ ts.t.reservation.pitchPriceLabel }} <strong> {{ cp.price }} {{ ts.t.reservation.currency }}</strong>)
-              </p>
-            </mat-option>
+        <mat-select
+          aria-label="camper place select"
+          [formField]="reservationForm.camperPlace"
+          (selectionChange)="camperPlaceOccupancyResource.reload()"
+        >
+          @if (camperPlacesResource.error()) {
+            <mat-error><p>{{ ts.t.error.serverError }}</p></mat-error
+            >
+          } @else if (camperPlacesResource.isLoading()) {
+            <mat-option><p>{{ ts.t.error.loading }}</p></mat-option>
+          } @else if (camperPlacesResource.value(); as camperPlaces) {
+            @for (cp of camperPlaces; track cp.id) {
+              <mat-option [value]="cp">
+                <p>{{ cp.type.typeName }} {{ cp.index }}</p>
+                <p>
+                  ({{ ts.t.reservation.pitchPriceLabel }}
+                  <strong> {{ cp.price }} {{ ts.t.reservation.currency }}</strong
+                  >)
+                </p>
+              </mat-option>
+            }
           }
         </mat-select>
 
@@ -58,39 +88,50 @@ import { form, FormField, required } from '@angular/forms/signals';
           }
         }
       </mat-form-field>
+      @if (camperPlaceOccupancyResource.isLoading()) {
+        <div style="width: 100%; display: flex; justify-content: center">
+          <mat-spinner></mat-spinner>
+        </div>
+      } @else {
+        <mat-form-field class="datepicker" appearance="outline" (click)="dp.open()">
+          <mat-label
+            >{{
+              isCamperPlaceSelected()
+                ? ts.t.reservation.selectDates
+                : ts.t.reservation.selectPitchFirst
+            }}
+          </mat-label>
+          <mat-hint>{{ ts.t.reservation.disabledDatesHint }}</mat-hint>
 
-      <mat-form-field class="datepicker" appearance="outline" (click)="dp.open()">
-        <mat-label>{{
-          isCamperPlaceSelected() ? ts.t.reservation.selectDates : ts.t.reservation.selectPitchFirst
-        }}</mat-label>
-        <mat-hint>{{ ts.t.reservation.disabledDatesHint }}</mat-hint>
+          <mat-date-range-input
+            [dateFilter]="occupiedDateFilter"
+            [rangePicker]="dp"
+            [disabled]="true"
+          >
+            <input
+              matStartDate
+              (dateChange)="onStartDateChange($event.value)"
+              [formField]="reservationForm.checkinDate"
+            />
+            <input
+              matEndDate
+              (dateChange)="onEndDateChange($event.value)"
+              [formField]="reservationForm.checkoutDate"
+            />
+          </mat-date-range-input>
+          <mat-datepicker-toggle #toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
+          <mat-date-range-picker #dp [disabled]="!isCamperPlaceSelected()"></mat-date-range-picker>
 
-        <mat-date-range-input
-          [dateFilter]="occupiedDateFilter"
-          [rangePicker]="dp"
-          [disabled]="true"
-        >
-          <input
-            matStartDate
-            (dateChange)="onStartDateChange($event.value)"
-            [formField]="reservationForm.checkinDate"
-          />
-          <input
-            matEndDate
-            (dateChange)="onEndDateChange($event.value)"
-            [formField]="reservationForm.checkoutDate"
-          />
-        </mat-date-range-input>
-        <mat-datepicker-toggle #toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
-        <mat-date-range-picker #dp [disabled]="!isCamperPlaceSelected()"></mat-date-range-picker>
-
-        @if (
-          (reservationForm.checkinDate().touched() || reservationForm.checkoutDate().touched()) &&
-          (isCheckinInvalid() || isCheckoutInvalid())
-        ) {
-          <mat-error>{{ ts.t.reservation.invalidDateRange }}</mat-error>
-        }
-      </mat-form-field>
+          @if (camperPlaceOccupancyResource.error()) {
+            <mat-error>{{ ts.t.error.serverError }}</mat-error>
+          } @else if (
+            (reservationForm.checkinDate().touched() || reservationForm.checkoutDate().touched()) &&
+            (isCheckinInvalid() || isCheckoutInvalid())
+          ) {
+            <mat-error>{{ ts.t.reservation.invalidDateRange }}</mat-error>
+          }
+        </mat-form-field>
+      }
 
       <div class="final-price-wrapper">
         <div class="final-price-text-wrapper">
@@ -208,15 +249,16 @@ import { form, FormField, required } from '@angular/forms/signals';
   `,
 })
 export class ReservationForm {
-  public formValid = output<boolean>();
-  public formValue = output<{
-    camperPlace: string;
+  protected readonly ts = inject(TranslationService);
+  private readonly faIconLibrary = inject(FaIconLibrary);
+  private readonly httpClient = inject(HttpClient);
+
+  protected formValid = output<boolean>();
+  protected formValue = output<{
+    camperPlace: CamperPlaceDTO | null;
     checkinDate: Date | null;
     checkoutDate: Date | null;
   }>();
-
-  protected readonly ts = inject(TranslationService);
-  private readonly faIconLibrary = inject(FaIconLibrary);
 
   constructor() {
     effect(() => {
@@ -229,18 +271,35 @@ export class ReservationForm {
     this.faIconLibrary.addIcons(faCircleQuestion);
   }
 
-  protected camperPlaces: { name: string; price: number }[] = [
-    { name: '1', price: 100 },
-    { name: '2', price: 134 },
-    { name: '3', price: 115 },
-  ];
+  protected camperPlacesResource = rxResource({
+    stream: () =>
+      this.httpClient.get<CamperPlaceDTO[]>('/api/camperPlace', {
+        headers: new HttpHeaders().set('Accept', 'application/json'),
+      }),
+  });
+
+  protected camperPlaceOccupancyResource = rxResource({
+    params: () => this.reservationForm().value().camperPlace?.id,
+    stream: ({ params }) =>
+      this.httpClient.get<string[]>(`/api/camperPlace/occupancy/${params.valueOf()}`, {
+        headers: new HttpHeaders().set('Accept', 'application/json'),
+      }),
+  });
+  //
+  // protected calculatedPriceResource = rxResource({
+  //   params: () => this.reservationForm().value().camperPlace?.id,
+  //   stream: ({ params }) =>
+  //     this.httpClient.get<Date[]>(`/api/camperPlace/occupancy/${params}`, {
+  //       headers: new HttpHeaders().set('Accept', 'application/json'),
+  //     }),
+  // });
 
   protected reservationModel = signal<{
-    camperPlace: string;
+    camperPlace: CamperPlaceDTO | null;
     checkinDate: Date | null;
     checkoutDate: Date | null;
   }>({
-    camperPlace: '',
+    camperPlace: null,
     checkinDate: null,
     checkoutDate: null,
   });
@@ -268,19 +327,32 @@ export class ReservationForm {
   });
 
   protected isCamperPlaceSelected() {
-    return this.reservationModel().camperPlace !== '';
+    return this.reservationModel().camperPlace !== null;
   }
 
   protected occupiedDateFilter = (d: Date | null): boolean => {
     const date = d || new Date();
-    const day = date.getDay();
+    const dateStr = this.getLocalDate(date);
+
+    const occupiedDates = !this.camperPlaceOccupancyResource.error()
+      ? this.camperPlaceOccupancyResource.value()
+      : [];
+    console.log(occupiedDates);
+    console.log('data: ' + d);
     return (
-      day !== 0 &&
-      day !== 6 &&
       date.getTime() >=
-        new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() ).getTime()
+        new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()).getTime()
+      && !occupiedDates!.includes(dateStr)
     );
   };
+
+  private getLocalDate(d: Date) {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
 
   protected onStartDateChange(value: Date | null) {
     this.selectedStartDate = value;

@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { ReservationForm } from '../components/reservation-form/reservation-form';
 import { GuestFormComponent } from '../components/guest-form.component/guest-form.component';
 import { TranslationService } from '../../../core/services/translation.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-reservation-page',
@@ -227,8 +228,9 @@ import { TranslationService } from '../../../core/services/translation.service';
   `,
 })
 export class ReservationPageComponent implements OnDestroy {
-  protected ts = inject(TranslationService);
-  private resendIntervalId: any = null;
+
+  protected readonly ts = inject(TranslationService);
+
   protected isGuestForm: boolean = false;
   protected isFormEnabled: boolean = false;
   protected isAuthoriseMessage: boolean = false;
@@ -237,7 +239,7 @@ export class ReservationPageComponent implements OnDestroy {
   protected reservationForm = signal<any>(null);
   protected guestForm = signal<any>(null);
   protected resendEmailRemainingSeconds = signal<number>(60);
-
+  private resendIntervalId: any = null;
   protected wipOutput = '';
 
   protected switchForms() {

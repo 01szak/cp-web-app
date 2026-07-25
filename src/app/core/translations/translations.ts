@@ -131,6 +131,11 @@ export interface ReservationTranslations {
   validation: ValidationTranslations;
 }
 
+export interface ErrorTranslations {
+  serverError: string;
+  loading: string;
+}
+
 export interface TranslationSchema {
   nav: NavTranslations;
   hero: HeroTranslations;
@@ -140,6 +145,7 @@ export interface TranslationSchema {
   footer: FooterTranslations;
   gallery: GalleryTranslations;
   reservation: ReservationTranslations;
+  error: ErrorTranslations;
 }
 
 export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
@@ -174,7 +180,7 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       close: 'ZAMKNIJ',
       photoGallery: {
         see: 'Zobcz',
-        seeFullGallery: 'Zobacz całą galerie'
+        seeFullGallery: 'Zobacz całą galerie',
       },
     },
     opinions: {
@@ -300,6 +306,10 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
         requiredField: 'To pole jest wymagane',
         invalidEmail: 'Podaj poprawny adres email',
       },
+    },
+    error: {
+      serverError: 'Wystąpił błąd, spróbuj ponownie później',
+      loading: 'Ładowanie...',
     },
   },
   en: {
@@ -458,6 +468,10 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
         requiredField: 'This field is required',
         invalidEmail: 'Provide a valid email address',
       },
+    },
+    error: {
+      serverError: 'Unexpected error occurred, try again later',
+      loading: 'Loading...',
     },
   },
 };
