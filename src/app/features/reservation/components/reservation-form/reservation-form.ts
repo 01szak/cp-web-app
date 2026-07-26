@@ -18,6 +18,7 @@ import { form, FormField, required } from '@angular/forms/signals';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { of } from 'rxjs';
 
 export interface CamperPlaceTypeDTO {
   id: number,
@@ -64,10 +65,13 @@ export interface CamperPlaceDTO {
           (selectionChange)="camperPlaceOccupancyResource.reload()"
         >
           @if (camperPlacesResource.error()) {
-            <mat-error><p>{{ ts.t.error.serverError }}</p></mat-error
+            <mat-option
+              ><p>{{ ts.t.error.serverError }}</p></mat-option
             >
           } @else if (camperPlacesResource.isLoading()) {
-            <mat-option><p>{{ ts.t.error.loading }}</p></mat-option>
+            <mat-option
+              ><p>{{ ts.t.error.loading }}</p></mat-option
+            >
           } @else if (camperPlacesResource.value(); as camperPlaces) {
             @for (cp of camperPlaces; track cp.id) {
               <mat-option [value]="cp">
@@ -94,8 +98,8 @@ export interface CamperPlaceDTO {
         </div>
       } @else {
         <mat-form-field class="datepicker" appearance="outline" (click)="dp.open()">
-          <mat-label
-            >{{
+          <mat-label>
+            {{
               isCamperPlaceSelected()
                 ? ts.t.reservation.selectDates
                 : ts.t.reservation.selectPitchFirst
@@ -142,10 +146,18 @@ export interface CamperPlaceDTO {
           <p class="final-price-text">{{ ts.t.reservation.suggestedPrice }}</p>
         </div>
         <mat-card class="final-price-number">
-          <p class="final-price-text">
-            <strong>{{ calculatedPrice }} {{ ts.t.reservation.currency }}</strong>
-          </p>
+          @if (calculatedPriceResource.isLoading()) {
+            <mat-spinner></mat-spinner>
+          }
+          @if (calculatedPriceResource.value(); as calcPrice) {
+            <p class="final-price-text">
+              <strong>{{ calcPrice }} {{ ts.t.reservation.currency }}</strong>
+            </p>
+          }
         </mat-card>
+        @if (calculatedPriceResource.error()) {
+          <p>{{ ts.t.error.serverError }}</p>
+        }
       </div>
     </form>
   `,
@@ -249,6 +261,7 @@ export interface CamperPlaceDTO {
   `,
 })
 export class ReservationForm {
+
   protected readonly ts = inject(TranslationService);
   private readonly faIconLibrary = inject(FaIconLibrary);
   private readonly httpClient = inject(HttpClient);
@@ -259,6 +272,8 @@ export class ReservationForm {
     checkinDate: Date | null;
     checkoutDate: Date | null;
   }>();
+
+  private camperPlaceOccupancy: null | Date[] = null;
 
   constructor() {
     effect(() => {
@@ -278,21 +293,38 @@ export class ReservationForm {
       }),
   });
 
-  protected camperPlaceOccupancyResource = rxResource({
-    params: () => this.reservationForm().value().camperPlace?.id,
-    stream: ({ params }) =>
-      this.httpClient.get<string[]>(`/api/camperPlace/occupancy/${params.valueOf()}`, {
-        headers: new HttpHeaders().set('Accept', 'application/json'),
-      }),
+  protected selectedCamperPlaceId = computed(() => {
+    return this.reservationModel().camperPlace?.id ?? null;
   });
-  //
-  // protected calculatedPriceResource = rxResource({
-  //   params: () => this.reservationForm().value().camperPlace?.id,
-  //   stream: ({ params }) =>
-  //     this.httpClient.get<Date[]>(`/api/camperPlace/occupancy/${params}`, {
-  //       headers: new HttpHeaders().set('Accept', 'application/json'),
-  //     }),
-  // });
+
+  protected camperPlaceOccupancyResource = rxResource({
+    params: () => this.selectedCamperPlaceId,
+    stream: ({ params }) => {
+      if (!params()) return of([]);
+
+      return this.httpClient.get<string[]>(`/api/camperPlace/occupancy/${params()}`, {
+        headers: new HttpHeaders().set('Accept', 'application/json'),
+      });
+    },
+  });
+
+  protected calculatedPriceResource = rxResource({
+    params: () => ({
+      cpId: this.reservationModel().camperPlace?.id,
+      checkin: this.reservationModel().checkinDate,
+      checkout: this.reservationModel().checkoutDate,
+    }),
+    stream: ({ params }) => {
+      if (!params.cpId || !params.checkin || !params.checkout) return of('');
+      console.log(params)
+      return this.httpClient.get<string>(
+        `/api/camperPlace/calcPrice/${params.cpId}/${this.getLocalDate(params.checkin)}/${this.getLocalDate(params.checkout)}`,
+        {
+          headers: new HttpHeaders().set('Accept', 'application/json'),
+        },
+      );
+    },
+  });
 
   protected reservationModel = signal<{
     camperPlace: CamperPlaceDTO | null;
@@ -334,15 +366,12 @@ export class ReservationForm {
     const date = d || new Date();
     const dateStr = this.getLocalDate(date);
 
-    const occupiedDates = !this.camperPlaceOccupancyResource.error()
-      ? this.camperPlaceOccupancyResource.value()
-      : [];
-    console.log(occupiedDates);
-    console.log('data: ' + d);
+    const occupiedDates = this.camperPlaceOccupancyResource.value() || [];
+
     return (
       date.getTime() >=
-        new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()).getTime()
-      && !occupiedDates!.includes(dateStr)
+        new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()).getTime() &&
+      !occupiedDates!.includes(dateStr)
     );
   };
 
@@ -354,6 +383,7 @@ export class ReservationForm {
     return `${year}-${month}-${day}`;
   }
 
+  // TODO inform the user about date shift
   protected onStartDateChange(value: Date | null) {
     this.selectedStartDate = value;
     this.reservationModel.update((model) => ({ ...model, checkinDate: value }));

@@ -5,10 +5,12 @@ import { SectionComponent } from '../../../shared/components/section/section.com
 import { MatCard } from '@angular/material/card';
 import {ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-import { ReservationForm } from '../components/reservation-form/reservation-form';
+import { CamperPlaceDTO, ReservationForm } from '../components/reservation-form/reservation-form';
 import { GuestFormComponent } from '../components/guest-form.component/guest-form.component';
 import { TranslationService } from '../../../core/services/translation.service';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-reservation-page',
@@ -37,7 +39,9 @@ import { HttpClient } from '@angular/common/http';
               <img class="map-image" src="/camperpark-map.jpg" alt="camper-park-map" />
             </mat-card>
 
-            <button class="btn-primary" (click)="enableForm()">{{ ts.t.reservation.startBtn }}</button>
+            <button class="btn-primary" (click)="enableForm()">
+              {{ ts.t.reservation.startBtn }}
+            </button>
           } @else {
             <mat-card class="form-container">
               <div class="form-content">
@@ -67,7 +71,9 @@ import { HttpClient } from '@angular/common/http';
                       </div>
                       <div class="confirmation-buttons">
                         <p>
-                          {{ ts.t.reservation.noEmailPrefix }} <strong>{{ resendEmailRemainingSeconds() }}</strong> {{ ts.t.reservation.noEmailSuffix }}
+                          {{ ts.t.reservation.noEmailPrefix }}
+                          <strong>{{ resendEmailRemainingSeconds() }}</strong>
+                          {{ ts.t.reservation.noEmailSuffix }}
                         </p>
                         <button
                           class="btn-outline"
@@ -100,9 +106,9 @@ import { HttpClient } from '@angular/common/http';
             }
           }
         </div>
-<!--        @if (wipOutput !== '') {-->
-<!--          {{ wipOutput }}-->
-<!--        }-->
+        <!--        @if (wipOutput !== '') {-->
+        <!--          {{ wipOutput }}-->
+        <!--        }-->
       </app-section>
     </main>
     <app-footer></app-footer>
@@ -164,7 +170,9 @@ import { HttpClient } from '@angular/common/http';
       box-sizing: border-box;
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
+      transition:
+        opacity 0.5s ease,
+        visibility 0.5s ease;
       padding: 20px 10px 10px 10px;
     }
 
@@ -228,8 +236,8 @@ import { HttpClient } from '@angular/common/http';
   `,
 })
 export class ReservationPageComponent implements OnDestroy {
-
   protected readonly ts = inject(TranslationService);
+  private readonly httpClient = inject(HttpClient);
 
   protected isGuestForm: boolean = false;
   protected isFormEnabled: boolean = false;
@@ -251,6 +259,7 @@ export class ReservationPageComponent implements OnDestroy {
       ...this.reservationForm(),
       ...this.guestForm(),
     };
+    this.createReservationResource.reload();
     this.wipOutput = JSON.stringify(payload);
     this.isAuthoriseMessage = true;
     this.startResendCounter();
@@ -265,6 +274,17 @@ export class ReservationPageComponent implements OnDestroy {
       clearInterval(this.resendIntervalId);
     }
   }
+
+  private createReservationResource = rxResource({
+    params: () => this.reservationForm() + this.guestForm(),
+    stream: ({ params }) => {
+      if (!this.isReservationFormValid() && !this.isGuestFormValid()) return of(null);
+        console.log(params);
+      return this.httpClient.post('/api/reservation', params, {
+        headers: new HttpHeaders().set('Accept', 'application/json'),
+      });
+    },
+  });
 
   private startResendCounter() {
     if (this.resendIntervalId) {
