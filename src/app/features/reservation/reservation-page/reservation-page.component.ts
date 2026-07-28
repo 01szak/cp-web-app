@@ -64,26 +64,33 @@ import { of } from 'rxjs';
                         (formValue)="guestForm.set($event)"
                       />
                     </div>
-                    <div class="slide-pane verification-pane">
+                    @if (createReservationResource.error()) {
                       <div>
-                        <h2>{{ ts.t.reservation.verificationTitle }}</h2>
-                        <h3>{{ ts.t.reservation.verificationDesc }}</h3>
+                        <h2>{{ ts.t.error.reservationError1 }}</h2>
+                        <h3>{{ ts.t.error.reservationError2 }}</h3>
                       </div>
-                      <div class="confirmation-buttons">
-                        <p>
-                          {{ ts.t.reservation.noEmailPrefix }}
-                          <strong>{{ resendEmailRemainingSeconds() }}</strong>
-                          {{ ts.t.reservation.noEmailSuffix }}
-                        </p>
-                        <button
-                          class="btn-outline"
-                          (click)="createReservation()"
-                          [disabled]="resendEmailRemainingSeconds() !== 0"
-                        >
-                          {{ ts.t.reservation.resendBtn }}
-                        </button>
+                    } @else {
+                      <div class="slide-pane verification-pane">
+                        <div>
+                          <h2>{{ ts.t.reservation.verificationTitle }}</h2>
+                          <h3>{{ ts.t.reservation.verificationDesc }}</h3>
+                        </div>
+                        <div class="confirmation-buttons">
+                          <p>
+                            {{ ts.t.reservation.noEmailPrefix }}
+                            <strong>{{ resendEmailRemainingSeconds() }}</strong>
+                            {{ ts.t.reservation.noEmailSuffix }}
+                          </p>
+                          <button
+                            class="btn-outline"
+                            (click)="createReservation()"
+                            [disabled]="resendEmailRemainingSeconds() !== 0"
+                          >
+                            {{ ts.t.reservation.resendBtn }}
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    }
                   </div>
                 </div>
               </div>
@@ -106,9 +113,6 @@ import { of } from 'rxjs';
             }
           }
         </div>
-        <!--        @if (wipOutput !== '') {-->
-        <!--          {{ wipOutput }}-->
-        <!--        }-->
       </app-section>
     </main>
     <app-footer></app-footer>
@@ -244,8 +248,8 @@ export class ReservationPageComponent implements OnDestroy {
   protected isAuthoriseMessage: boolean = false;
   protected isReservationFormValid = signal<boolean>(false);
   protected isGuestFormValid = signal<boolean>(false);
-  protected reservationForm = signal<any>(null);
-  protected guestForm = signal<any>(null);
+  protected reservationForm = signal<ReservationDTO>({} as ReservationDTO);
+  protected guestForm = signal<GuestDTO>({} as GuestDTO);
   protected resendEmailRemainingSeconds = signal<number>(60);
   private resendIntervalId: any = null;
   protected wipOutput = '';
@@ -275,16 +279,22 @@ export class ReservationPageComponent implements OnDestroy {
     }
   }
 
-  private createReservationResource = rxResource({
-    params: () => this.reservationForm() + this.guestForm(),
-    stream: ({ params }) => {
+  protected createReservationResource = rxResource({
+    stream: () => {
       if (!this.isReservationFormValid() && !this.isGuestFormValid()) return of(null);
-        console.log(params);
-      return this.httpClient.post('/api/reservation', params, {
-        headers: new HttpHeaders().set('Accept', 'application/json'),
-      });
+      return this.httpClient.post(
+        '/api/reservation',
+        this.buildReservationDTO(this.guestForm(), this.reservationForm()),
+        {
+          headers: new HttpHeaders().set('Accept', 'application/json'),
+        },
+      );
     },
   });
+
+  private buildReservationDTO(guest: GuestDTO, reservation: ReservationDTO) {
+    return { ...reservation, guest: guest } as ReservationDTO;
+  }
 
   private startResendCounter() {
     if (this.resendIntervalId) {
@@ -294,7 +304,6 @@ export class ReservationPageComponent implements OnDestroy {
 
     this.resendIntervalId = setInterval(() => {
       this.resendEmailRemainingSeconds.update((v) => v - 1);
-      console.log(this.resendEmailRemainingSeconds);
 
       if (this.resendEmailRemainingSeconds() <= 0) {
         clearInterval(this.resendIntervalId);
@@ -302,4 +311,20 @@ export class ReservationPageComponent implements OnDestroy {
       }
     }, 1000);
   }
+}
+
+interface GuestDTO {
+  firstname: string | null;
+  lastname: string | null;
+  email: string | null;
+  phoneNumber: string | null;
+  carRegistration: string | null;
+}
+
+export interface ReservationDTO {
+  checkin: string | null;
+  checkout: string | null;
+  camperPlace: CamperPlaceDTO | null;
+  guest: GuestDTO | null;
+  paid: false | null;
 }

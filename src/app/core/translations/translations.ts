@@ -98,6 +98,7 @@ export interface ValidationTranslations {
   checkoutRequired: string;
   requiredField: string;
   invalidEmail: string;
+  invalidPhoneNumber: string;
 }
 
 export interface ReservationTranslations {
@@ -134,6 +135,9 @@ export interface ReservationTranslations {
 export interface ErrorTranslations {
   serverError: string;
   loading: string;
+  reservationError1: string,
+  reservationError2: string,
+
 }
 
 export interface TranslationSchema {
@@ -305,11 +309,15 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
         checkoutRequired: 'Wybierz datę wyjazdu',
         requiredField: 'To pole jest wymagane',
         invalidEmail: 'Podaj poprawny adres email',
+        invalidPhoneNumber: 'Podaj poprawny numer telefonu np:+48111222333',
       },
     },
     error: {
       serverError: 'Wystąpił błąd, spróbuj ponownie później',
       loading: 'Ładowanie...',
+      reservationError1: 'Wystąpił błąd',
+      reservationError2:
+        'W tej chwili nie jesteśmy wstanie przetworzyć tego żadania, jeżeli problem nie ustąpi zadzwoń do nas bezpośrednio!',
     },
   },
   en: {
@@ -437,7 +445,7 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       startBtn: 'Proceed to reservation',
       verificationTitle: 'Verification',
       verificationDesc:
-        'A verification email has been sent to the address provided, the reservation will be saved after authorization',
+        'A verification email has been sent to the address provided. The reservation will be saved after authorization',
       noEmailPrefix: "Didn't receive the email? Wait",
       noEmailSuffix: 'seconds and try again',
       resendBtn: 'Resend',
@@ -467,11 +475,15 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
         checkoutRequired: 'Select check-out date',
         requiredField: 'This field is required',
         invalidEmail: 'Provide a valid email address',
+        invalidPhoneNumber: 'Provide a valid phone number. Example: +48111222333',
       },
     },
     error: {
       serverError: 'Unexpected error occurred, try again later',
       loading: 'Loading...',
+      reservationError1: 'Unexpected error occurred',
+      reservationError2:
+        'Right now we are not able to process your request, if this will happen again later call us directly!',
     },
   },
 };

@@ -72,3 +72,10 @@ $breakpoints: (
     gap: 20px;
   }
 }
+
+.mat-spinner-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-content: center
+}

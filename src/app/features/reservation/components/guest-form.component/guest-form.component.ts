@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, output, signal } from '@angular/core';
 import { TranslationService } from '../../../../core/services/translation.service';
 import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
-import { email, form, FormField, required } from '@angular/forms/signals';
+import { email, form, FormField, required, validate } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-guest-form',
@@ -31,7 +31,7 @@ import { email, form, FormField, required } from '@angular/forms/signals';
 
       <mat-form-field appearance="outline">
         <mat-label>{{ ts.t.reservation.email }}</mat-label>
-        <input matInput type="email" [formField]="guestForm.email" />
+        <input matInput type="email" [formField]="guestForm.email" [placeholder]="'xyz@example.com'" />
         @if (guestForm.email().touched() && isEmailInvalid()) {
           @for (error of guestForm.email().errors(); track error) {
             <mat-error>{{ error.message }}</mat-error>
@@ -41,7 +41,7 @@ import { email, form, FormField, required } from '@angular/forms/signals';
 
       <mat-form-field appearance="outline">
         <mat-label>{{ ts.t.reservation.phone }}</mat-label>
-        <input matInput type="text" [formField]="guestForm.phoneNumber" />
+        <input matInput type="text" [formField]="guestForm.phoneNumber" [placeholder]="'+48111222333'" />
         @if (guestForm.phoneNumber().touched() && isPhoneNumberInvalid()) {
           @for (error of guestForm.phoneNumber().errors(); track error) {
             <mat-error>{{ error.message }}</mat-error>
@@ -105,6 +105,18 @@ export class GuestFormComponent {
     required(schema.phoneNumber, { message: this.ts.t.reservation.validation.requiredField });
     required(schema.email, { message: this.ts.t.reservation.validation.requiredField });
     email(schema.email, { message: this.ts.t.reservation.validation.invalidEmail });
+    validate(schema.phoneNumber, ({ value }) => {
+      const phoneRegex = /^\+\d{1,3}\d{9}$/;
+
+      if (value() !== '' && !phoneRegex.test(value())) {
+        return {
+          kind: 'phoneNumber',
+          message: this.ts.t.reservation.validation.invalidPhoneNumber,
+        };
+      }
+
+      return null;
+    });
   });
 
   protected isFirstnameInvalid = computed(() => this.guestForm.firstname().invalid());
