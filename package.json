@@ -25,6 +25,8 @@
     "@fortawesome/angular-fontawesome": "^4.0.0",
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "express": "^5.1.0",
+    "flag-icons": "^7.5.0",
+    "libphonenumber-js": "^1.13.12",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

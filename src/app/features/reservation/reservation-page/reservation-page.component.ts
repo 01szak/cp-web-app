@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 import { SectionComponent } from '../../../shared/components/section/section.component';
@@ -8,9 +8,12 @@ import { MatInputModule } from '@angular/material/input';
 import { CamperPlaceDTO, ReservationForm } from '../components/reservation-form/reservation-form';
 import { GuestFormComponent } from '../components/guest-form.component/guest-form.component';
 import { TranslationService } from '../../../core/services/translation.service';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { rxResource } from '@angular/core/rxjs-interop';
-import { of } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { ParceoService } from '../services/parceo.service';
+import { FaIconComponent, FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { faCircleCheck } from '@fortawesome/free-solid-svg-icons/faCircleCheck';
+import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons/faTriangleExclamation';
 
 @Component({
   selector: 'app-reservation-page',
@@ -23,102 +26,174 @@ import { of } from 'rxjs';
     MatInputModule,
     ReservationForm,
     GuestFormComponent,
+    MatProgressSpinner,
+    FaIconComponent,
   ],
   template: `
     <app-navbar></app-navbar>
     <main>
       <app-section [variant]="'light'">
         <div>
-          @if (!isFormEnabled) {
-            <div>
-              <h2>{{ ts.t.reservation.introTitle }}</h2>
-              <p>{{ ts.t.reservation.introDesc }}</p>
-            </div>
+          @switch (currentView) {
+            @case ('START') {
+              <div>
+                <h2>{{ ts.t.reservation.introTitle }}</h2>
+                <p>{{ ts.t.reservation.introDesc }}</p>
+              </div>
 
-            <mat-card>
-              <img class="map-image" src="/camperpark-map.jpg" alt="camper-park-map" />
-            </mat-card>
+              <mat-card>
+                <img class="map-image" src="/camperpark-map.jpg" alt="camper-park-map" />
+              </mat-card>
 
-            <button class="btn-primary" (click)="enableForm()">
-              {{ ts.t.reservation.startBtn }}
-            </button>
-          } @else {
-            <mat-card class="form-container">
-              <div class="form-content">
-                <div class="form-slider-wrapper">
-                  <div
-                    class="form-slider"
-                    [class.slide-step-1]="!isGuestForm && !isAuthoriseMessage"
-                    [class.slide-step-2]="isGuestForm && !isAuthoriseMessage"
-                    [class.slide-step-3]="isAuthoriseMessage"
-                  >
-                    <div class="slide-pane">
-                      <app-reservation-form
-                        (formValid)="isReservationFormValid.set($event)"
-                        (formValue)="reservationForm.set($event)"
-                      />
-                    </div>
-                    <div class="slide-pane">
-                      <app-guest-form
-                        (formValid)="isGuestFormValid.set($event)"
-                        (formValue)="guestForm.set($event)"
-                      />
-                    </div>
-                    @if (createReservationResource.error()) {
-                      <div>
-                        <h2>{{ ts.t.error.reservationError1 }}</h2>
-                        <h3>{{ ts.t.error.reservationError2 }}</h3>
+              <button class="btn-primary" (click)="enableForm()">
+                {{ ts.t.reservation.startBtn }}
+              </button>
+            }
+            @case ('FORM') {
+              <mat-card class="form-container">
+                <div class="form-content">
+                  <div class="form-slider-wrapper">
+                    <div
+                      class="form-slider"
+                      [class.slide-step-1]="!isGuestForm && !isAuthoriseMessage"
+                      [class.slide-step-2]="isGuestForm && !isAuthoriseMessage"
+                      [class.slide-step-3]="isAuthoriseMessage"
+                    >
+                      <div class="slide-pane">
+                        <app-reservation-form
+                          (formValid)="isReservationFormValid.set($event)"
+                          (formValue)="reservationForm.set($event)"
+                        />
                       </div>
-                    } @else {
-                      <div class="slide-pane verification-pane">
-                        <div>
-                          <h2>{{ ts.t.reservation.verificationTitle }}</h2>
-                          <h3>{{ ts.t.reservation.verificationDesc }}</h3>
-                        </div>
-                        <div class="confirmation-buttons">
-                          <p>
-                            {{ ts.t.reservation.noEmailPrefix }}
-                            <strong>{{ resendEmailRemainingSeconds() }}</strong>
-                            {{ ts.t.reservation.noEmailSuffix }}
-                          </p>
-                          <button
-                            class="btn-outline"
-                            (click)="createReservation()"
-                            [disabled]="resendEmailRemainingSeconds() !== 0"
-                          >
-                            {{ ts.t.reservation.resendBtn }}
-                          </button>
-                        </div>
+                      <div class="slide-pane">
+                        <app-guest-form
+                          (formValid)="isGuestFormValid.set($event)"
+                          (formValue)="guestForm.set($event)"
+                        />
                       </div>
-                    }
+                      @if (createReservationResource.error()) {
+                        <div class="slide-pane verification-pane">
+                          <div class="status-message status-message--error">
+                            <fa-icon [icon]="['fas', 'triangle-exclamation']" class="status-icon" />
+                            <p class="status-title">{{ ts.t.error.reservationError1 }}</p>
+                            <p class="status-text">{{ ts.t.error.reservationError2 }}</p>
+                          </div>
+                        </div>
+                      } @else {
+                        <div class="slide-pane verification-pane">
+                          <div class="status-message status-message--success">
+                            <fa-icon [icon]="['fas', 'circle-check']" class="status-icon" />
+                            <p class="status-title">{{ ts.t.reservation.verificationTitle }}</p>
+                            <p class="status-text">{{ ts.t.reservation.verificationDesc }}</p>
+                          </div>
+                          <div class="confirmation-buttons">
+                            <p class="resend-text">
+                              {{ ts.t.reservation.noEmailPrefix }}
+                              <strong>{{ resendEmailRemainingSeconds() }}</strong>
+                              {{ ts.t.reservation.noEmailSuffix }}
+                            </p>
+                            <button
+                              class="btn-outline"
+                              (click)="createReservation()"
+                              [disabled]="resendEmailRemainingSeconds() !== 0"
+                            >
+                              {{ ts.t.reservation.resendBtn }}
+                            </button>
+                          </div>
+                        </div>
+                      }
+                    </div>
                   </div>
                 </div>
-              </div>
-            </mat-card>
+                @if (!isAuthoriseMessage) {
+                  <section class="form-btn-section">
+                    <button
+                      class="btn-outline"
+                      (click)="isGuestForm ? switchForms() : enableForm()"
+                    >
+                      {{ ts.t.reservation.backBtn }}
+                    </button>
 
-            @if (!isAuthoriseMessage) {
-              <section class="form-btn-section">
-                <button class="btn-outline" (click)="isGuestForm ? switchForms() : enableForm()">
-                  {{ ts.t.reservation.backBtn }}
-                </button>
-
-                <button
-                  class="btn-primary"
-                  (click)="isGuestForm ? createReservation() : switchForms()"
-                  [disabled]="isGuestForm ? !isGuestFormValid() : !isReservationFormValid()"
-                >
-                  {{ isGuestForm ? ts.t.reservation.sendBtn : ts.t.reservation.nextBtn }}
-                </button>
-              </section>
+                    <button
+                      class="btn-primary"
+                      (click)="isGuestForm ? createReservation() : switchForms()"
+                      [disabled]="isGuestForm ? !isGuestFormValid() : !isReservationFormValid()"
+                    >
+                      {{ isGuestForm ? ts.t.reservation.sendBtn : ts.t.reservation.nextBtn }}
+                    </button>
+                  </section>
+                }
+              </mat-card>
             }
+            @case ('VERIFY_MESSAGE') {
+              <mat-card class="form-container verification-pane">
+                @if (verifyTargetIdResource.isLoading()) {
+                  <div class="mat-spinner-wrapper">
+                    <mat-spinner></mat-spinner>
+                  </div>
+                } @else if (verifyTargetIdResource.error()) {
+                  <div class="status-message status-message--error">
+                    <fa-icon [icon]="['fas', 'triangle-exclamation']" class="status-icon" />
+                    <p class="status-title">{{ ts.t.error.serverError }}</p>
+                    <p class="status-text">{{ ts.t.error.reservationError2 }}</p>
+                  </div>
+                } @else {
+                  <div class="status-message status-message--success">
+                    <fa-icon [icon]="['fas', 'circle-check']" class="status-icon" />
+                    <p class="status-title">Rezerwacja została zautoryzowana pomyślnie</p>
+                    <p class="status-text">
+                      Wszystko gotowe, nie możemy sie doczekać twojego przyjazdu :)
+                    </p>
+                  </div>
+                }
+              </mat-card>
+            }
+          }
+          @if (isGuestForm) {
+            <div class="warning-info">
+              <p>
+                {{ ts.t.reservation.warningInfo.prefix }}
+                <a (click)="openRulesPopup()" class="warning-info-link">{{
+                  ts.t.reservation.warningInfo.linkText
+                }}</a>
+                {{ ts.t.reservation.warningInfo.suffix }}
+              </p>
+            </div>
           }
         </div>
       </app-section>
     </main>
     <app-footer></app-footer>
+
+    @if (isRulesPopupOpen()) {
+      <div class="rules-popup-overlay" (click)="closeRulesPopup()">
+        <div class="rules-popup" (click)="$event.stopPropagation()">
+          <h2>{{ ts.t.reservation.warningInfo.popup.title }}</h2>
+          <p>{{ ts.t.reservation.warningInfo.popup.body }}</p>
+          <button class="btn-primary" (click)="closeRulesPopup()">
+            {{ ts.t.reservation.warningInfo.popup.close }}
+          </button>
+        </div>
+      </div>
+    }
   `,
   styles: `
+    .warning-info-link {
+      color: blue;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .warning-info {
+      text-align: center;
+    }
+
     .confirmation-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
       width: 100%;
     }
 
@@ -183,16 +258,57 @@ import { of } from 'rxjs';
     .verification-pane {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      gap: 15px;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
       height: 100%;
     }
 
-    @media (min-width: 768px) {
-      .verification-pane {
-        flex-direction: row;
-        gap: 10px;
-      }
+    .status-message {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.6rem;
+      padding: var(--spacing-xs);
+    }
+
+    .status-icon {
+      display: grid;
+      place-items: center;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      font-size: 1.4rem;
+    }
+
+    .status-message--success .status-icon {
+      background: var(--color-accent-gold-disabled);
+      color: var(--color-accent-gold);
+    }
+
+    .status-message--error .status-icon {
+      background: rgb(180 95 44 / 0.12);
+      color: var(--color-accent-warm);
+    }
+
+    .status-title {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--color-text-dark);
+    }
+
+    .status-text {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--color-text-dark);
+      opacity: 0.7;
+      max-width: 34ch;
+    }
+
+    .resend-text {
+      text-align: center;
     }
 
     .form-slider.slide-step-1 {
@@ -237,11 +353,44 @@ import { of } from 'rxjs';
       object-fit: contain;
       clip-path: inset(2%);
     }
+
+    .rules-popup-overlay {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgb(0 0 0 / 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: var(--spacing-sm);
+      box-sizing: border-box;
+    }
+
+    .rules-popup {
+      background-color: var(--color-bg-light-soft);
+      border-radius: 12px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 100%;
+      overflow-y: auto;
+      padding: var(--spacing-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+
+    .rules-popup button {
+      align-self: center;
+    }
   `,
 })
 export class ReservationPageComponent implements OnDestroy {
   protected readonly ts = inject(TranslationService);
-  private readonly httpClient = inject(HttpClient);
+  private readonly parceo = inject(ParceoService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly faIconLibrary = inject(FaIconLibrary);
 
   protected isGuestForm: boolean = false;
   protected isFormEnabled: boolean = false;
@@ -251,26 +400,39 @@ export class ReservationPageComponent implements OnDestroy {
   protected reservationForm = signal<ReservationDTO>({} as ReservationDTO);
   protected guestForm = signal<GuestDTO>({} as GuestDTO);
   protected resendEmailRemainingSeconds = signal<number>(60);
-  private resendIntervalId: any = null;
+  protected reservationRequest = signal<ReservationDTO | null>(null);
+  protected isRulesPopupOpen = signal<boolean>(false);
   protected wipOutput = '';
+  protected currentView: 'START' | 'FORM' | 'AUTH_MESSAGE' | 'VERIFY_MESSAGE' = 'START';
+
+  private resendIntervalId: any = null;
+  private verifyTargetId: string | null = null;
 
   protected switchForms() {
     this.isGuestForm = !this.isGuestForm;
   }
 
   protected createReservation() {
-    const payload = {
-      ...this.reservationForm(),
-      ...this.guestForm(),
-    };
-    this.createReservationResource.reload();
+    if (!this.isReservationFormValid() || !this.isGuestFormValid()) return;
+
+    const payload = this.buildReservationDTO(this.guestForm(), this.reservationForm());
+    this.reservationRequest.set(payload);
     this.wipOutput = JSON.stringify(payload);
     this.isAuthoriseMessage = true;
     this.startResendCounter();
   }
 
   protected enableForm() {
-    this.isFormEnabled = !this.isFormEnabled;
+    this.currentView = 'FORM';
+  }
+
+  ngOnInit() {
+    this.faIconLibrary.addIcons(faCircleCheck, faTriangleExclamation);
+    this.verifyTargetId = this.route.snapshot.paramMap.get('targetId');
+    if (this.verifyTargetId) {
+      this.verifyTargetIdResource.reload();
+      this.currentView = 'VERIFY_MESSAGE';
+    }
   }
 
   ngOnDestroy() {
@@ -279,18 +441,11 @@ export class ReservationPageComponent implements OnDestroy {
     }
   }
 
-  protected createReservationResource = rxResource({
-    stream: () => {
-      if (!this.isReservationFormValid() && !this.isGuestFormValid()) return of(null);
-      return this.httpClient.post(
-        '/api/reservation',
-        this.buildReservationDTO(this.guestForm(), this.reservationForm()),
-        {
-          headers: new HttpHeaders().set('Accept', 'application/json'),
-        },
-      );
-    },
-  });
+  protected verifyTargetIdResource = this.parceo.verifyReservation(() => this.verifyTargetId);
+
+  protected createReservationResource = this.parceo.createReservation(() =>
+    this.reservationRequest(),
+  );
 
   private buildReservationDTO(guest: GuestDTO, reservation: ReservationDTO) {
     return { ...reservation, guest: guest } as ReservationDTO;
@@ -311,14 +466,23 @@ export class ReservationPageComponent implements OnDestroy {
       }
     }, 1000);
   }
+
+  protected openRulesPopup() {
+    this.isRulesPopupOpen.set(true);
+  }
+
+  protected closeRulesPopup() {
+    this.isRulesPopupOpen.set(false);
+  }
 }
 
-interface GuestDTO {
+export interface GuestDTO {
   firstname: string | null;
   lastname: string | null;
   email: string | null;
   phoneNumber: string | null;
   carRegistration: string | null;
+  country: string | null
 }
 
 export interface ReservationDTO {

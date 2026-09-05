@@ -15,11 +15,9 @@ import { MatSelect } from '@angular/material/select';
 import { MatTooltip } from '@angular/material/tooltip';
 import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons/faCircleQuestion';
 import { form, FormField, required, validate } from '@angular/forms/signals';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { rxResource } from '@angular/core/rxjs-interop';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { of } from 'rxjs';
 import { ReservationDTO } from '../../reservation-page/reservation-page.component';
+import { ParceoService } from '../../services/parceo.service';
 
 export interface CamperPlaceTypeDTO {
   id: number;
@@ -267,10 +265,11 @@ export interface CamperPlaceDTO {
     }
   `,
 })
+//TODO do not send requests when form is invalid
 export class ReservationForm {
   protected readonly ts = inject(TranslationService);
   private readonly faIconLibrary = inject(FaIconLibrary);
-  private readonly httpClient = inject(HttpClient);
+  private readonly parceo = inject(ParceoService);
 
   protected formValid = output<boolean>();
   protected formValue = output<ReservationDTO>();
@@ -288,44 +287,21 @@ export class ReservationForm {
     this.faIconLibrary.addIcons(faCircleQuestion);
   }
 
-  protected camperPlacesResource = rxResource({
-    stream: () =>
-      this.httpClient.get<CamperPlaceDTO[]>('/api/camperPlace', {
-        headers: new HttpHeaders().set('Accept', 'application/json'),
-      }),
-  });
+  protected camperPlacesResource = this.parceo.camperPlaces();
 
   protected selectedCamperPlaceId = computed(() => {
     return this.reservationModel().camperPlace?.id ?? null;
   });
 
-  protected camperPlaceOccupancyResource = rxResource({
-    params: () => this.selectedCamperPlaceId,
-    stream: ({ params }) => {
-      if (!params()) return of([]);
+  protected camperPlaceOccupancyResource = this.parceo.camperPlaceOccupancy(() =>
+    this.selectedCamperPlaceId(),
+  );
 
-      return this.httpClient.get<string[]>(`/api/camperPlace/occupancy/${params()}`, {
-        headers: new HttpHeaders().set('Accept', 'application/json'),
-      });
-    },
-  });
-
-  protected calculatedPriceResource = rxResource({
-    params: () => ({
-      cpId: this.reservationModel().camperPlace?.id,
-      checkin: this.reservationModel().checkin,
-      checkout: this.reservationModel().checkout,
-    }),
-    stream: ({ params }) => {
-      if (!params.cpId || !params.checkin || !params.checkout) return of('');
-      return this.httpClient.get<string>(
-        `/api/camperPlace/calcPrice/${params.cpId}/${params.checkin}/${params.checkout}`,
-        {
-          headers: new HttpHeaders().set('Accept', 'application/json'),
-        },
-      );
-    },
-  });
+  protected calculatedPriceResource = this.parceo.calculatedPrice(() => ({
+    cpId: this.reservationModel().camperPlace?.id,
+    checkin: this.reservationModel().checkin,
+    checkout: this.reservationModel().checkout,
+  }));
 
   protected reservationModel = signal<ReservationDTO>({
     camperPlace: null,

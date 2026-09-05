@@ -101,6 +101,19 @@ export interface ValidationTranslations {
   invalidPhoneNumber: string;
 }
 
+export interface RulesPopupTranslations {
+  title: string;
+  body: string;
+  close: string;
+}
+
+export interface WarningInfoTranslations {
+  prefix: string;
+  linkText: string;
+  suffix: string;
+  popup: RulesPopupTranslations;
+}
+
 export interface ReservationTranslations {
   introTitle: string;
   introDesc: string;
@@ -127,9 +140,11 @@ export interface ReservationTranslations {
   firstname: string;
   lastname: string;
   email: string;
+  areaCode: string;
   phone: string;
   registration: string;
   validation: ValidationTranslations;
+  warningInfo: WarningInfoTranslations;
 }
 
 export interface ErrorTranslations {
@@ -309,7 +324,18 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
         checkoutRequired: 'Wybierz datę wyjazdu',
         requiredField: 'To pole jest wymagane',
         invalidEmail: 'Podaj poprawny adres email',
-        invalidPhoneNumber: 'Podaj poprawny numer telefonu np:+48111222333',
+        invalidPhoneNumber: 'Podaj poprawny numer telefonu',
+      },
+      areaCode: 'Numer kierunkowy',
+      warningInfo: {
+        prefix: "Klikając 'Wyślij' akceptujesz",
+        linkText: 'regulamin prywatności oraz regulamin firmy',
+        suffix: '© 2026 Camper Park Stary Folwark',
+        popup: {
+          title: 'Regulamin',
+          body: 'Treść regulaminu prywatności oraz regulaminu firmy zostanie uzupełniona.',
+          close: 'Zamknij',
+        },
       },
     },
     error: {
@@ -475,7 +501,18 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
         checkoutRequired: 'Select check-out date',
         requiredField: 'This field is required',
         invalidEmail: 'Provide a valid email address',
-        invalidPhoneNumber: 'Provide a valid phone number. Example: +48111222333',
+        invalidPhoneNumber: 'Provide a valid phone number.',
+      },
+      areaCode: 'Area code',
+      warningInfo: {
+        prefix: "By clicking 'Send' you accept the",
+        linkText: 'privacy policy and company rules',
+        suffix: '© 2026 Camper Park Stary Folwark',
+        popup: {
+          title: 'Rules',
+          body: 'The privacy policy and company rules content will be provided here.',
+          close: 'Close',
+        },
       },
     },
     error: {

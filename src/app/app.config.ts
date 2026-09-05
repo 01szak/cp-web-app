@@ -2,9 +2,10 @@ import { ApplicationConfig, PLATFORM_ID, provideBrowserGlobalErrorListeners } fr
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
+import { provideClientHydration, withEventReplay, withHttpTransferCacheOptions } from '@angular/platform-browser';
+ import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
 import { isPlatformBrowser } from '@angular/common';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,6 +22,10 @@ export const appConfig: ApplicationConfig = {
     provideNativeDateAdapter(),
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideClientHydration(withEventReplay()),
+    provideHttpClient(withFetch()),
+    provideClientHydration(
+      withEventReplay(),
+      withHttpTransferCacheOptions({ includePostRequests: true }),
+    ),
   ],
 };
