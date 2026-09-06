@@ -3,8 +3,6 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 import { SectionComponent } from '../../../shared/components/section/section.component';
 import { MatCard } from '@angular/material/card';
-import {ReactiveFormsModule } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
 import { CamperPlaceDTO, ReservationForm } from '../components/reservation-form/reservation-form';
 import { GuestFormComponent } from '../components/guest-form.component/guest-form.component';
 import { TranslationService } from '../../../core/services/translation.service';
@@ -22,8 +20,6 @@ import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons/faTrian
     NavbarComponent,
     SectionComponent,
     MatCard,
-    ReactiveFormsModule,
-    MatInputModule,
     ReservationForm,
     GuestFormComponent,
     MatProgressSpinner,

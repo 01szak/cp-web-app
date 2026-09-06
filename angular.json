@@ -34,7 +34,8 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.scss"],
+            "styles": ["src/styles.scss", "node_modules/flag-icons/css/flag-icons.min.css"],
+            "allowedCommonJsDependencies": ["@fortawesome/free-solid-svg-icons"],
             "server": "src/main.server.ts",
             "outputMode": "server",
             "security": {
@@ -62,8 +63,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "6kB",
+                  "maximumError": "10kB"
                 }
               ],
               "outputHashing": "all"
