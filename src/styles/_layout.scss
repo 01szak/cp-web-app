@@ -34,7 +34,7 @@ $breakpoints: (
 .grid {
   display: grid;
   gap: var(--spacing-md);
-  
+
   &-2 {
     grid-template-columns: 1fr;
     @include respond-to('tablet') {
@@ -51,4 +51,31 @@ $breakpoints: (
       grid-template-columns: repeat(3, 1fr);
     }
   }
+}
+
+.form-layout {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.form-btn-section {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  @include respond-to('desktop') {
+    justify-content: center;
+    gap: 20px;
+  }
+}
+
+.mat-spinner-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-content: center
 }
