@@ -71,12 +71,27 @@ import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons/faTrian
                           (formValue)="guestForm.set($event)"
                         />
                       </div>
-                      @if (createReservationResource.error()) {
+                      @if (createReservationResource.isLoading()) {
+                        <div class="slide-pane verification-pane">
+                          <div class="mat-spinner-wrapper">
+                            <mat-spinner diameter="60"></mat-spinner>
+                          </div>
+                          <p class="status-text">{{ ts.t.error.loading }}</p>
+                        </div>
+                      } @else if (createReservationResource.error()) {
                         <div class="slide-pane verification-pane">
                           <div class="status-message status-message--error">
                             <fa-icon [icon]="['fas', 'triangle-exclamation']" class="status-icon" />
                             <p class="status-title">{{ ts.t.error.reservationError1 }}</p>
                             <p class="status-text">{{ ts.t.error.reservationError2 }}</p>
+                          </div>
+                          <div class="confirmation-buttons">
+                            <button class="btn-primary" (click)="createReservationResource.reload()">
+                              {{ ts.t.reservation.retryBtn }}
+                            </button>
+                            <button class="btn-outline" (click)="returnToForm()">
+                              {{ ts.t.reservation.backBtn }}
+                            </button>
                           </div>
                         </div>
                       } @else {
@@ -109,7 +124,7 @@ import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons/faTrian
                   <section class="form-btn-section">
                     <button
                       class="btn-outline"
-                      (click)="isGuestForm ? switchForms() : enableForm()"
+                      (click)="isGuestForm ? switchForms() : (currentView = 'START')"
                     >
                       {{ ts.t.reservation.backBtn }}
                     </button>
@@ -140,10 +155,8 @@ import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons/faTrian
                 } @else {
                   <div class="status-message status-message--success">
                     <fa-icon [icon]="['fas', 'circle-check']" class="status-icon" />
-                    <p class="status-title">Rezerwacja została zautoryzowana pomyślnie</p>
-                    <p class="status-text">
-                      Wszystko gotowe, nie możemy sie doczekać twojego przyjazdu :)
-                    </p>
+                    <p class="status-title">{{ ts.t.reservation.verifySuccessTitle }}</p>
+                    <p class="status-text">{{ ts.t.reservation.verifySuccessDesc }}</p>
                   </div>
                 }
               </mat-card>
@@ -153,9 +166,9 @@ import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons/faTrian
             <div class="warning-info">
               <p>
                 {{ ts.t.reservation.warningInfo.prefix }}
-                <a (click)="openRulesPopup()" class="warning-info-link">{{
-                  ts.t.reservation.warningInfo.linkText
-                }}</a>
+                <button type="button" (click)="openRulesPopup()" class="warning-info-link">
+                  {{ ts.t.reservation.warningInfo.linkText }}
+                </button>
                 {{ ts.t.reservation.warningInfo.suffix }}
               </p>
             </div>
@@ -179,6 +192,10 @@ import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons/faTrian
   `,
   styles: `
     .warning-info-link {
+      padding: 0;
+      border: none;
+      background: none;
+      font: inherit;
       color: blue;
       &:hover {
         cursor: pointer;
@@ -420,6 +437,15 @@ export class ReservationPageComponent implements OnDestroy {
     this.wipOutput = JSON.stringify(payload);
     this.isAuthoriseMessage = true;
     this.startResendCounter();
+  }
+
+  protected returnToForm() {
+    this.isAuthoriseMessage = false;
+    this.reservationRequest.set(null);
+    if (this.resendIntervalId) {
+      clearInterval(this.resendIntervalId);
+      this.resendIntervalId = null;
+    }
   }
 
   protected enableForm() {

@@ -61,7 +61,7 @@ export interface CamperPlaceDTO {
         <mat-select
           aria-label="camper place select"
           [formField]="reservationForm.camperPlace"
-          (selectionChange)="camperPlaceOccupancyResource.reload()"
+          (selectionChange)="onCamperPlaceChange()"
         >
           @if (camperPlacesResource.error()) {
             <mat-option
@@ -281,6 +281,13 @@ export class ReservationForm {
       this.formValid.emit(this.areAllFieldsValid());
       this.formValue.emit(this.reservationModel());
     });
+
+    // Re-check the selected range against the freshly loaded occupancy data
+    // (e.g. after switching camper place). No-op while no dates are selected.
+    effect(() => {
+      this.camperPlaceOccupancyResource.value();
+      this.validateDateRange();
+    });
   }
 
   public ngOnInit() {
@@ -370,6 +377,21 @@ export class ReservationForm {
     const day = String(date.getDate()).padStart(2, '0');
 
     return `${year}-${month}-${day}`;
+  }
+
+  protected onCamperPlaceChange() {
+    // Drop the previous place's range so it can't be retained or submitted.
+    this.selectedStartDate = null;
+    this.selectedEndDate = null;
+    this.reservationModel.update((model) => ({
+      ...model,
+      checkin: null,
+      checkout: null,
+    }));
+
+    // Reload occupancy; the constructor effect revalidates the (now empty)
+    // range once the refreshed data for the new place is available.
+    this.camperPlaceOccupancyResource.reload();
   }
 
   // TODO inform the user about date shift

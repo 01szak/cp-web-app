@@ -7,7 +7,7 @@ import {
   MatAutocompleteTrigger,
   MatOption,
 } from '@angular/material/autocomplete';
-import { isValidPhoneNumber, type CountryCode } from 'libphonenumber-js';
+import { isValidPhoneNumber, parsePhoneNumberFromString, type CountryCode } from 'libphonenumber-js';
 import { buildCountryCallingCodes } from '../../../../shared/data/country-calling-codes';
 import { CountryCallingCode } from '../../../../shared/models/country-calling-code.model';
 
@@ -245,7 +245,10 @@ export class GuestFormComponent {
       lastname: model.lastname,
       email: model.email,
       phoneNumber: model.areaCode
-        ? `+${model.areaCode.dialCode}${model.phoneNumber}`
+        ? (parsePhoneNumberFromString(
+            model.phoneNumber,
+            model.areaCode.iso2 as CountryCode,
+          )?.number ?? `+${model.areaCode.dialCode}${model.phoneNumber}`)
         : model.phoneNumber,
       carRegistration: model.carRegistration,
       country: model.areaCode?.iso2 || ''

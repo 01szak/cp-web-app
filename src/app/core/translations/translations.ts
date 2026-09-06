@@ -123,9 +123,12 @@ export interface ReservationTranslations {
   noEmailPrefix: string;
   noEmailSuffix: string;
   resendBtn: string;
+  retryBtn: string;
   backBtn: string;
   nextBtn: string;
   sendBtn: string;
+  verifySuccessTitle: string;
+  verifySuccessDesc: string;
   step1Title: string;
   selectPitch: string;
   pitchPriceLabel: string;
@@ -198,8 +201,8 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       gallerySubtitle: 'Każde zdjęcie to inna historia',
       close: 'ZAMKNIJ',
       photoGallery: {
-        see: 'Zobcz',
-        seeFullGallery: 'Zobacz całą galerie',
+        see: 'Zobacz',
+        seeFullGallery: 'Zobacz całą galerię',
       },
     },
     opinions: {
@@ -298,9 +301,12 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       noEmailPrefix: 'Nie dostałeś maila? Odczekaj',
       noEmailSuffix: 'sekund i spróbuj ponownie',
       resendBtn: 'Wyślij ponownie',
+      retryBtn: 'Spróbuj ponownie',
       backBtn: 'Cofnij',
       nextBtn: 'Kontynuuj',
       sendBtn: 'Wyślij',
+      verifySuccessTitle: 'Rezerwacja została zautoryzowana pomyślnie',
+      verifySuccessDesc: 'Wszystko gotowe, nie możemy sie doczekać twojego przyjazdu :)',
       step1Title: 'Podaj parcele i czas pobytu',
       selectPitch: 'Wybierz parcele',
       pitchPriceLabel: 'cena za dobe:',
@@ -343,7 +349,7 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       loading: 'Ładowanie...',
       reservationError1: 'Wystąpił błąd',
       reservationError2:
-        'W tej chwili nie jesteśmy wstanie przetworzyć tego żadania, jeżeli problem nie ustąpi zadzwoń do nas bezpośrednio!',
+        'W tej chwili nie jesteśmy w stanie przetworzyć tego żądania, jeżeli problem nie ustąpi zadzwoń do nas bezpośrednio!',
     },
   },
   en: {
@@ -475,9 +481,12 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       noEmailPrefix: "Didn't receive the email? Wait",
       noEmailSuffix: 'seconds and try again',
       resendBtn: 'Resend',
+      retryBtn: 'Try again',
       backBtn: 'Back',
       nextBtn: 'Continue',
       sendBtn: 'Send',
+      verifySuccessTitle: 'Reservation authorized successfully',
+      verifySuccessDesc: "Everything is ready, we can't wait for your arrival :)",
       step1Title: 'Select pitch and stay duration',
       selectPitch: 'Select pitch',
       pitchPriceLabel: 'price per night:',
