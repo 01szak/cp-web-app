@@ -4,6 +4,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
 import { CamperPlaceDTO } from '../components/reservation-form/reservation-form';
 import { ReservationDTO } from '../reservation-page/reservation-page.component';
+import { WEB_APP_API_KEY } from '../../../core/tokens/api-config';
 
 interface CalculatedPriceRequest {
   cpId: number | undefined;
@@ -16,12 +17,13 @@ interface CalculatedPriceRequest {
 })
 export class ParceoService {
   private readonly http = inject(HttpClient);
+  private readonly apiKey = inject(WEB_APP_API_KEY);
 
   private headers() {
     return new HttpHeaders()
       .set('Accept', 'application/json')
       .set('X-org-id', '2')
-      .set('X-api-key', '123abc');
+      .set('X-api-key', this.apiKey);
   }
 
   camperPlaces() {
