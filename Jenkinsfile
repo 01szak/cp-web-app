@@ -16,7 +16,7 @@ pipeline {
     NODEJS = "NodeJS_22"
 
     // --- Environment-dependent (prod vs test) ---
-    APP_NAME    = "${params.DEPLOY_ENV == 'prod' ? 'camperparkstaryfolwark' : 'camperparkstaryfolwark_test_deploy'}"
+    APP_NAME    = "${params.DEPLOY_ENV == 'prod' ? 'camperparkstaryfolwark' : 'camperparkstaryfolwark_test'}"
     SERVER_PATH = "${params.DEPLOY_ENV == 'prod' ? '/var/www/camperparkstaryfolwark' : '/var/www/camperparkstaryfolwark_test'}"
     PORT        = "${params.DEPLOY_ENV == 'prod' ? '4100' : '4101'}"
     GIT_BRANCH  = "${params.DEPLOY_ENV == 'prod' ? 'master' : 'develop'}"
