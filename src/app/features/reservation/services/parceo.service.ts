@@ -18,11 +18,13 @@ interface CalculatedPriceRequest {
 export class ParceoService {
   private readonly http = inject(HttpClient);
   private readonly apiKey = inject(WEB_APP_API_KEY);
+  //TODO this should be taken from jenkins credentials
+  private readonly orgId = '1';
 
   private headers() {
     return new HttpHeaders()
       .set('Accept', 'application/json')
-      .set('X-org-id', '2')
+      .set('X-org-id', this.orgId)
       .set('X-api-key', this.apiKey);
   }
 
