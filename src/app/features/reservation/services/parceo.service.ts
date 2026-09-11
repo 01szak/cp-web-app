@@ -4,7 +4,6 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
 import { CamperPlaceDTO } from '../components/reservation-form/reservation-form';
 import { ReservationDTO } from '../reservation-page/reservation-page.component';
-import { WEB_APP_API_KEY } from '../../../core/tokens/api-config';
 
 interface CalculatedPriceRequest {
   cpId: number | undefined;
