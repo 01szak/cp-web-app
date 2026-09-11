@@ -17,21 +17,11 @@ interface CalculatedPriceRequest {
 })
 export class ParceoService {
   private readonly http = inject(HttpClient);
-  private readonly apiKey = inject(WEB_APP_API_KEY);
-  //TODO this should be taken from jenkins credentials
-  private readonly orgId = '1';
-
-  private headers() {
-    return new HttpHeaders()
-      .set('Accept', 'application/json')
-      .set('X-org-id', this.orgId)
-      .set('X-api-key', this.apiKey);
-  }
 
   camperPlaces() {
     return rxResource({
       stream: () =>
-        this.http.get<CamperPlaceDTO[]>('/api/camperPlace', { headers: this.headers() }),
+        this.http.get<CamperPlaceDTO[]>('/api/camperPlace'),
     });
   }
 
@@ -40,9 +30,7 @@ export class ParceoService {
       params: camperPlaceId,
       stream: ({ params }) => {
         if (!params) return of([]);
-        return this.http.get<string[]>(`/api/camperPlace/occupancy/${params}`, {
-          headers: this.headers(),
-        });
+        return this.http.get<string[]>(`/api/camperPlace/occupancy/${params}`);
       },
     });
   }
@@ -53,9 +41,7 @@ export class ParceoService {
       stream: ({ params }) => {
         if (!params.cpId || !params.checkin || !params.checkout) return of('');
         return this.http.get<string>(
-          `/api/camperPlace/calcPrice/${params.cpId}/${params.checkin}/${params.checkout}`,
-          { headers: this.headers() },
-        );
+          `/api/camperPlace/calcPrice/${params.cpId}/${params.checkin}/${params.checkout}`);
       },
     });
   }
@@ -65,9 +51,7 @@ export class ParceoService {
       stream: () => {
         const id = targetId();
         if (!id) return of(null);
-        return this.http.post(`/api/web/reservation/verify/${id}`, null, {
-          headers: this.headers(),
-        });
+        return this.http.post(`/api/web/reservation/verify/${id}`, null);
       },
     });
   }
@@ -77,10 +61,7 @@ export class ParceoService {
       params: request,
       stream: ({ params }) => {
         if (!params) return of(null);
-        return this.http.post('/api/web/reservation/init', params, {
-          headers: this.headers(),
-        });
-      },
+        return this.http.post('/api/web/reservation/init', params)},
     });
   }
 }
