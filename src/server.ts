@@ -27,6 +27,7 @@ const API_REQUEST_HEADERS: HeadersInit = {
 
 app.use((req, res, next) => {
   console.log('🔥 REQUEST:', {
+    path: req.path,
     method: req.method,
     url: req.originalUrl,
     host: req.headers.host,
