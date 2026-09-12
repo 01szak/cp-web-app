@@ -14,7 +14,7 @@ const angularApp = new AngularNodeAppEngine();
 
 app.use(express.json());
 
-  const API_URL: string = process.env['WEB_APP_API_URL'] || 'http://localhost:8080';
+const API_URL: string = process.env['WEB_APP_API_URL'] || 'http://localhost:8080';
 //TODO this should be taken from jenkins credentials
 const ORG_ID = process.env['WEB_APP_ORG_ID'] || '2';
 const API_KEY = process.env['WEB_APP_API_KEY'] || '123abc';
@@ -25,7 +25,24 @@ const API_REQUEST_HEADERS: HeadersInit = {
   'X-api-key': API_KEY,
 };
 
+app.use((req, res, next) => {
+  console.log('🔥 REQUEST:', {
+    method: req.method,
+    url: req.originalUrl,
+    host: req.headers.host,
+    hostname: req.hostname,
+    protocol: req.protocol,
+    forwardedHost: req.headers['x-forwarded-host'],
+    forwardedProto: req.headers['x-forwarded-proto'],
+    userAgent: req.headers['user-agent'],
+  });
+  console.log('API_URL: ' + API_URL);
+  console.log('ORG_ID: ' + ORG_ID);
+  next()
+});
+
 async function parceoFetch(path: string, options: RequestInit = {}) {
+  console.log(`SENDING REQUEST TO: ${API_URL}/${path} WITH OPTIONS: ${options}`);
   try {
     return fetch(`${API_URL}/${path}`, {
       ...options,
@@ -96,16 +113,6 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  console.log('🔥 SSR REQUEST:', {
-    method: req.method,
-    url: req.url,
-    host: req.headers.host,
-    hostname: req.hostname,
-    protocol: req.protocol,
-    forwardedHost: req.headers['x-forwarded-host'],
-    forwardedProto: req.headers['x-forwarded-proto'],
-  });
-
   angularApp
     .handle(req)
     .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
