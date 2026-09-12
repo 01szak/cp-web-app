@@ -30,14 +30,12 @@ const API_REQUEST_HEADERS: HeadersInit = {
 };
 
 async function parceoFetch(path: string, options: RequestInit = {}) {
-  console.log(`${API_URL}/${path}`);
   try {
     return fetch(`${API_URL}/${path}`, {
       ...options,
       headers: API_REQUEST_HEADERS,
     });
   } catch (error) {
-    console.log(`PARCEO FETCH ERROR: ${error}`);
     throw error;
   }
 }
@@ -121,8 +119,6 @@ if (isMainModule(import.meta.url) || process.env['pm_id']) {
     if (error) {
       throw error;
     }
-
-    console.log(`Node Express server listening on http://localhost:${port}`);
   });
 }
 

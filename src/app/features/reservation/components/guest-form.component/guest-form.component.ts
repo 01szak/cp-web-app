@@ -147,7 +147,6 @@ export class GuestFormComponent {
   constructor() {
     effect(() => {
       this.formValid.emit(this.areAllFieldsValid());
-      console.log(this.areAllFieldsValid.toString())
       this.formValue.emit(this.buildOutputValue());
     });
   }
@@ -212,11 +211,6 @@ export class GuestFormComponent {
   protected isCarRegistrationInvalid = computed(() => this.guestForm.carRegistration().invalid());
 
   protected areAllFieldsValid = computed(() => {
-    console.log(this.isFirstnameInvalid().valueOf());
-    console.log(this.isLastnameInvalid().valueOf());
-    console.log(this.isEmailInvalid().valueOf());
-    console.log(this.isAreaCodeInvalid().valueOf());
-    console.log(this.isCarRegistrationInvalid().valueOf());
     return (
       !this.isFirstnameInvalid() &&
       !this.isLastnameInvalid() &&
@@ -231,7 +225,6 @@ export class GuestFormComponent {
     country ? `+${country.dialCode}` : '';
 
   protected onAreaCodeQueryChange(event: Event) {
-    console.log((event.target as HTMLInputElement).value);
     this.areaCodeQuery.set((event.target as HTMLInputElement).value);
     if (this.guestForm.areaCode().value()) {
       this.guestForm.areaCode().value.set(null);
