@@ -80,9 +80,13 @@ pipeline {
               cd ${SERVER_PATH}
 
               echo '🟢 Restarting PM2 app...'
+              pm2 delete ${APP_NAME} || true
 
-              PORT=${PORT} pm2 delete ${APP_NAME} || true
-              PORT=${PORT} WEB_APP_API_KEY='\$WEB_APP_API_KEY' pm2 start server/server.mjs --name ${APP_NAME} --update-env
+              PORT=${PORT} \
+              WEB_APP_API_KEY='\$WEB_APP_API_KEY' \
+              WEB_APP_ORG_ID=${WEB_APP_ORG_ID} \
+              WEB_APP_API_URL=${WEB_APP_API_URL} \
+              pm2 start server/server.mjs --name ${APP_NAME} --update-env
               pm2 save
             "
 
