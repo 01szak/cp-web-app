@@ -293,7 +293,7 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
     reservation: {
       introTitle: 'Tu możesz dokonać rezerwacji',
       introDesc:
-        'Poniżej znajduje się mapa naszego obiektu. Kliknij przycisk **Przejdź do rezerwacji** aby wypełnić formularz',
+        'Poniżej znajduje się mapa naszego obiektu. Kliknij przycisk \"Przejdź do rezerwacji\" aby wypełnić formularz',
       startBtn: 'Przejdź do rezerwacji',
       verificationTitle: 'Weryfikacja',
       verificationDesc:
@@ -334,7 +334,7 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       },
       areaCode: 'Numer kierunkowy',
       warningInfo: {
-        prefix: "Klikając 'Wyślij' akceptujesz",
+        prefix: "Klikając \"Wyślij\" akceptujesz",
         linkText: 'regulamin prywatności oraz regulamin firmy',
         suffix: '© 2026 Camper Park Stary Folwark',
         popup: {
@@ -473,7 +473,7 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
     reservation: {
       introTitle: 'Here you can make a reservation',
       introDesc:
-        'Below is a map of our campsite. Click the **Proceed to reservation** button to fill out the form',
+        'Below is a map of our campsite. Click the \"Proceed to reservation\" button to fill out the form',
       startBtn: 'Proceed to reservation',
       verificationTitle: 'Verification',
       verificationDesc:

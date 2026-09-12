@@ -12,17 +12,77 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
-/**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/{*splat}', (req, res) => {
- *   // Handle API request
- * });
- * ```
- */
+app.use(express.json());
+
+  const API_URL: string = process.env['WEB_APP_API_URL'] || 'http://localhost:8080';
+//TODO this should be taken from jenkins credentials
+const ORG_ID = process.env['WEB_APP_ORG_ID'] || '2';
+const API_KEY = process.env['WEB_APP_API_KEY'] || '123abc';
+const API_REQUEST_HEADERS: HeadersInit = {
+  Accept: 'application/json',
+  'Content-Type': 'application/json',
+  'X-org-id': ORG_ID,
+  'X-api-key': API_KEY,
+};
+
+async function parceoFetch(path: string, options: RequestInit = {}) {
+  try {
+    return fetch(`${API_URL}/${path}`, {
+      ...options,
+      headers: API_REQUEST_HEADERS,
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
+app.get('/api/camperPlace', async (req, res) => {
+  const response = await parceoFetch('camperPlace');
+  const data = await response.json();
+  res.status(response.status).json(data);
+});
+
+app.get('/api/camperPlace/occupancy/:id', async (req, res) => {
+  const response = await parceoFetch(`camperPlace/occupancy/${req.params.id}`);
+  const data = await response.json();
+  res.status(response.status).json(data);
+});
+
+app.get('/api/camperPlace/calcPrice/:id/:checkin/:checkout', async (req, res) => {
+  const { id, checkin, checkout } = req.params;
+  const response = await parceoFetch(`camperPlace/calcPrice/${id}/${checkin}/${checkout}`);
+  const data = await response.json();
+  res.status(response.status).json(data);
+});
+
+app.post('/api/web/reservation/init', async (req, res, next) => {
+  try {
+    const response = await parceoFetch('web/reservation/init', {
+      method: 'POST',
+      body: JSON.stringify(req.body),
+    });
+    const text = await response.text();
+    res
+      .status(response.status)
+      .send(text);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/web/reservation/verify/:targetId', async (req, res, next) => {
+  const params: { targetId: string } = req.params;
+  try {
+    const response = await parceoFetch(`web/reservation/verify/${params.targetId}`, {
+      method: 'POST',
+      body: JSON.stringify(req.body),
+    });
+    const text = await response.text();
+    res.status(response.status).send(text);
+  } catch (error) {
+    next(error);
+  }
+});
 
 /**
  * Serve static files from /browser
@@ -55,8 +115,6 @@ if (isMainModule(import.meta.url) || process.env['pm_id']) {
     if (error) {
       throw error;
     }
-
-    console.log(`Node Express server listening on http://localhost:${port}`);
   });
 }
 

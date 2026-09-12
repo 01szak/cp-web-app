@@ -27,14 +27,20 @@ pipeline {
     //   test -> kacper/camper_park/test_deploy/credentials
     // If this pipeline runs as a single job (not one job per folder), give the
     // two credentials distinct ids and switch on params.DEPLOY_ENV here instead.
-    API_KEY_CREDENTIAL_ID = "web_app_api_key_for_orgId-1"
+    // in future if there will be more then 1 organisations the id will be taken from the credentials as well
+
+    WEB_APP_ORG_ID = "1"
+    WEB_APP_API_URL = "http://localhost:8080"
+    API_KEY_CREDENTIAL_ID = "web_app_api_key_for_orgId-${WEB_APP_ORG_ID}"
+
+
   }
 
   stages {
 
     stage('Checkout') {
       steps {
-        echo "🌍 Environment: ${params.DEPLOY_ENV} (branch: ${GIT_BRANCH}, port: ${PORT}, app: ${APP_NAME})"
+        echo "Environment: ${params.DEPLOY_ENV} (branch: ${GIT_BRANCH}, port: ${PORT}, app: ${APP_NAME})"
         git branch: "${GIT_BRANCH}",
             url: "https://github.com/01szak/cp-web-app.git"
       }
