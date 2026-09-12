@@ -30,10 +30,8 @@ pipeline {
     // in future if there will be more then 1 organisations the id will be taken from the credentials as well
 
     WEB_APP_ORG_ID = "1"
-    WEB_APP_API_URL = "http://localhost:8080"
+    WEB_APP_API_URL = "http://localhost:${params.DEPLOY_ENV == 'prod' ? 2000 : 2001}"
     API_KEY_CREDENTIAL_ID = "web_app_api_key_for_orgId-${WEB_APP_ORG_ID}"
-
-
   }
 
   stages {
