@@ -95,10 +95,17 @@ app.use(
   }),
 );
 
-/**
- * Handle all other requests by rendering the Angular application.
- */
 app.use((req, res, next) => {
+  console.log('🔥 SSR REQUEST:', {
+    method: req.method,
+    url: req.url,
+    host: req.headers.host,
+    hostname: req.hostname,
+    protocol: req.protocol,
+    forwardedHost: req.headers['x-forwarded-host'],
+    forwardedProto: req.headers['x-forwarded-proto'],
+  });
+
   angularApp
     .handle(req)
     .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
