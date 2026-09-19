@@ -10,7 +10,7 @@ export type Language = 'pl' | 'en';
 export class TranslationService {
   private platformId = inject(PLATFORM_ID);
   currentLang = signal<Language>('pl');
-  
+
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
       const savedLang = localStorage.getItem('lang') as Language;
@@ -24,6 +24,7 @@ export class TranslationService {
     this.currentLang.set(lang);
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('lang', lang);
+      localStorage.setItem('locale', lang);
     }
   }
 

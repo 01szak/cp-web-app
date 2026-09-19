@@ -1,32 +1,63 @@
 import { Component, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslationService, Language } from '../../../core/services/translation.service';
+import { TranslationService} from '../../../core/services/translation.service';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   template: `
-    <nav class="navbar" [class.navbar--hidden]="isScrolledDown && !isMobileMenuOpen" [class.navbar--scrolled]="!isAtTop" role="navigation" aria-label="Menu główne">
+    <nav
+      class="navbar"
+      [class.navbar--hidden]="isScrolledDown && !isMobileMenuOpen && !isReservationPage()"
+      [class.navbar--scrolled]="!isAtTop || isReservationPage()"
+      role="navigation"
+      aria-label="Menu główne"
+    >
       <div class="container navbar__container">
         <div class="navbar__logo">
           <a (click)="scrollTo('top')" style="cursor: pointer;">STARY FOLWARK</a>
         </div>
 
-        <ul class="navbar__links" [class.navbar__links--active]="isMobileMenuOpen" [attr.aria-expanded]="isMobileMenuOpen">
-          <li class="navbar__item"><a (click)="scrollTo('about')" class="navbar__link">{{ ts.t.nav.about }}</a></li>
-          <li class="navbar__item"><a (click)="scrollTo('opinions')" class="navbar__link">{{ ts.t.nav.opinions }}</a></li>
-          <li class="navbar__item"><a (click)="scrollTo('location')" class="navbar__link">{{ ts.t.nav.location }}</a></li>
-          <li class="navbar__item"><a (click)="scrollTo('contact')" class="navbar__link">{{ ts.t.nav.contact }}</a></li>
+        <ul
+          class="navbar__links"
+          [class.navbar__links--active]="isMobileMenuOpen"
+          [attr.aria-expanded]="isMobileMenuOpen"
+        >
+          <li class="navbar__item">
+            <a (click)="scrollTo('about')" class="navbar__link">{{ ts.t.nav.about }}</a>
+          </li>
+          <li class="navbar__item">
+            <a (click)="scrollTo('opinions')" class="navbar__link">{{ ts.t.nav.opinions }}</a>
+          </li>
+          <li class="navbar__item">
+            <a (click)="scrollTo('location')" class="navbar__link">{{ ts.t.nav.location }}</a>
+          </li>
+          <li class="navbar__item">
+            <a (click)="scrollTo('contact')" class="navbar__link">{{ ts.t.nav.contact }}</a>
+          </li>
 
           <li class="navbar__item navbar__language-switcher">
-            <button (click)="ts.setLanguage('pl')" [class.active]="ts.currentLang() === 'pl'">PL</button>
+            <button (click)="ts.setLanguage('pl')" [class.active]="ts.currentLang() === 'pl'">
+              PL
+            </button>
             <span class="divider">|</span>
-            <button (click)="ts.setLanguage('en')" [class.active]="ts.currentLang() === 'en'">EN</button>
+            <button (click)="ts.setLanguage('en')" [class.active]="ts.currentLang() === 'en'">
+              EN
+            </button>
           </li>
 
           <li class="navbar__item navbar__item--cta">
-            <button class="btn-primary" (click)="scrollTo('contact')" aria-label="Zarezerwuj miejsce">{{ ts.t.nav.book }}</button>
+            @if (isReservationPage()) {
+              <button class="btn-primary" [routerLink]="['/']" aria-label="Strona główna">
+                {{ ts.t.nav.home }}
+              </button>
+            } @else {
+              <button class="btn-primary" [routerLink]="['/reservation']" aria-label="Zarezerwuj miejsce">
+                {{ ts.t.nav.book }}
+              </button>
+            }
           </li>
         </ul>
 
@@ -35,17 +66,23 @@ import { TranslationService, Language } from '../../../core/services/translation
           (click)="toggleMobileMenu()"
           [class.navbar__hamburger--active]="isMobileMenuOpen"
           [attr.aria-label]="isMobileMenuOpen ? 'Zamknij menu' : 'Otwórz menu'"
-          [attr.aria-controls]="'navbar-links'">
+          [attr.aria-controls]="'navbar-links'"
+        >
           <span></span><span></span><span></span>
         </button>
       </div>
     </nav>
-    <div class="navbar-overlay" [class.navbar-overlay--active]="isMobileMenuOpen" (click)="toggleMobileMenu()"></div>
+    <div
+      class="navbar-overlay"
+      [class.navbar-overlay--active]="isMobileMenuOpen"
+      (click)="toggleMobileMenu()"
+    ></div>
   `,
-  styleUrls: ['./navbar.component.scss']
+  styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent {
   ts = inject(TranslationService);
+  router = inject(Router);
   isScrolledDown = false;
   isAtTop = true;
   isMobileMenuOpen = false;
@@ -70,7 +107,27 @@ export class NavbarComponent {
     }
   }
 
+  isReservationPage(): boolean {
+    return this.router.url.startsWith('/reservation');
+  }
+
   scrollTo(id: string) {
+    if (this.isReservationPage()) {
+      this.router.navigate(['/']).then(() => {
+        setTimeout(() => {
+          this.scrollAfterRedirect(id);
+        }, 100);
+      });
+    } else {
+      this.scrollAfterRedirect(id);
+    }
+
+    if (this.isMobileMenuOpen) {
+      this.toggleMobileMenu();
+    }
+  }
+
+  private scrollAfterRedirect(id: string) {
     if (id === 'top') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
@@ -84,13 +141,9 @@ export class NavbarComponent {
 
         window.scrollTo({
           top: offsetPosition,
-          behavior: 'smooth'
+          behavior: 'smooth',
         });
       }
-    }
-
-    if (this.isMobileMenuOpen) {
-      this.toggleMobileMenu();
     }
   }
 }
