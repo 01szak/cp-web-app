@@ -29,7 +29,7 @@ export class ParceoService {
       params: camperPlaceId,
       stream: ({ params }) => {
         if (!params) return of([]);
-        return this.http.get<string[]>(`/api/camperPlace/occupancy/${params}`);
+        return this.http.get<string[][]>(`/api/camperPlace/occupancy/${params}`);
       },
     });
   }

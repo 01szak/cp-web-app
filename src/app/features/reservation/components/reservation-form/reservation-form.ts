@@ -3,6 +3,7 @@ import { TranslationService } from '../../../../core/services/translation.servic
 import { FaIconComponent, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { MatCard } from '@angular/material/card';
 import {
+  MatCalendarCellClassFunction,
   MatDatepickerToggle,
   MatDateRangeInput,
   MatDateRangePicker,
@@ -123,12 +124,15 @@ export interface CamperPlaceDTO {
             />
           </mat-date-range-input>
           <mat-datepicker-toggle #toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
-          <mat-date-range-picker #dp [disabled]="!isCamperPlaceSelected()"></mat-date-range-picker>
+          <mat-date-range-picker
+            [dateClass]="dateClass"
+            #dp
+            [disabled]="!isCamperPlaceSelected()"
+          ></mat-date-range-picker>
 
           @if (camperPlaceOccupancyResource.error()) {
             <mat-error>{{ ts.t.error.serverError }}</mat-error>
-          }
-          @else if (
+          } @else if (
             (reservationForm.checkin().touched() || reservationForm.checkout().touched()) &&
             (isCheckinInvalid() || isCheckoutInvalid())
           ) {
@@ -164,8 +168,24 @@ export interface CamperPlaceDTO {
     </form>
   `,
   styles: `
-    .gap {
-      gap: 20px;
+    ::ng-deep
+      button.mat-calendar-body-cell.edge-calendar-date
+      > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+      border-color: var(--mat-sys-primary);
+      background-color: var(
+        --mat-datepicker-calendar-date-hover-state-background-color,
+        color-mix(
+          in srgb,
+          var(--mat-sys-on-surface) calc(var(--mat-sys-hover-state-layer-opacity) * 100%),
+          transparent
+        )
+      );
+    }
+
+    ::ng-deep .mat-datepicker-content {
+      --mat-datepicker-calendar-date-today-outline-color: transparent;
+      --mat-datepicker-calendar-date-today-disabled-state-outline-color: transparent;
+      --mat-datepicker-calendar-date-today-selected-state-outline-color: transparent;
     }
 
     ::ng-deep .mat-mdc-form-field.mat-form-field-disabled {
@@ -275,6 +295,7 @@ export class ReservationForm {
   protected formValue = output<ReservationDTO>();
 
   private camperPlaceOccupancy: null | Date[] = null;
+  private edgeDateList: string[] = [];
 
   constructor() {
     effect(() => {
@@ -287,7 +308,40 @@ export class ReservationForm {
     effect(() => {
       this.camperPlaceOccupancyResource.value();
       this.validateDateRange();
+      this.countEdgeDatesFromOccupancyList();
     });
+  }
+
+  private countEdgeDatesFromOccupancyList() {
+    const occupiedDates = this.camperPlaceOccupancyResource.value() || [];
+    const flattenOccupiedDates = occupiedDates.flatMap(x => x);
+    const edges: string[] = [];
+
+    occupiedDates.forEach((dates) => {
+      const checkinDate = this.getDateFromString(dates[0]);
+      const dateBeforeCheckin = new Date(checkinDate.getFullYear(), checkinDate.getMonth(), checkinDate.getDate() - 1);
+      if (!flattenOccupiedDates.includes(this.getLocalDate(dateBeforeCheckin))) edges.push(dates[0]);
+
+      const checkoutDate = this.getDateFromString(dates[dates.length - 1]);
+      const dateAfterCheckout = new Date(
+        checkoutDate.getFullYear(),
+        checkoutDate.getMonth(),
+        checkoutDate.getDate() + 1,
+      );
+
+      if (!flattenOccupiedDates.includes(this.getLocalDate(dateAfterCheckout)))
+        edges.push(dates[dates.length - 1]);
+
+    });
+
+    this.edgeDateList = Array.from(new Set(edges));
+  }
+
+  private getDateFromString(dateStr: string) {
+    const year = parseInt(dateStr.substring(0, 4));
+    const month = parseInt(dateStr.substring(5, 7));
+    const day = parseInt(dateStr.substring(8, 10));
+    return new Date(year, month - 1, day)
   }
 
   public ngOnInit() {
@@ -362,13 +416,25 @@ export class ReservationForm {
     const date = d || new Date();
     const dateStr = this.getLocalDate(date);
 
-    const occupiedDates = this.camperPlaceOccupancyResource.value() || [];
+    const occupiedDates = this.camperPlaceOccupancyResource.value()?.flatMap((x) => x) || [];
 
     return (
-      date.getTime() >=
-        new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()).getTime() &&
-      !occupiedDates!.includes(dateStr)
+      date.getTime() >= new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()).getTime() &&
+      (!occupiedDates!.includes(dateStr)
+        || (
+          this.edgeDateList.includes(dateStr)
+          && !occupiedDates.includes(this.getLocalDate(new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1)))
+          && occupiedDates.includes(this.getLocalDate(new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1))))
+      )
     );
+  };
+
+  dateClass: MatCalendarCellClassFunction<Date> = (cellDate, view) => {
+    if (view !== 'month') return '';
+    const lclDate = this.getLocalDate(
+      new Date(cellDate.getFullYear(), cellDate.getMonth(), cellDate.getDate()),
+    );
+    return this.edgeDateList.includes(lclDate) ? 'edge-calendar-date' : '';
   };
 
   private getLocalDate(date: Date) {
