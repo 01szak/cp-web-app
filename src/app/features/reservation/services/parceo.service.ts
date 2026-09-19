@@ -2,8 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
-import { CamperPlaceDTO } from '../components/reservation-form/reservation-form';
-import { ReservationDTO } from '../reservation-page/reservation-page.component';
+import { CamperPlaceDTO, ReservationDTO } from '../models/reservation.models';
 
 interface CalculatedPriceRequest {
   cpId: number | undefined;

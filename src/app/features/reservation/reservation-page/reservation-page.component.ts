@@ -3,7 +3,8 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 import { SectionComponent } from '../../../shared/components/section/section.component';
 import { MatCard } from '@angular/material/card';
-import { CamperPlaceDTO, ReservationForm } from '../components/reservation-form/reservation-form';
+import { ReservationForm } from '../components/reservation-form/reservation-form';
+import { GuestDTO, ReservationDTO } from '../models/reservation.models';
 import { GuestFormComponent } from '../components/guest-form.component/guest-form.component';
 import { TranslationService } from '../../../core/services/translation.service';
 import { ActivatedRoute } from '@angular/router';
@@ -221,7 +222,6 @@ import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons/faTrian
       height: 100%;
       padding: 10px;
       border: solid 1px black;
-      padding: 10px;
     }
 
     .form-content {
@@ -427,10 +427,11 @@ export class ReservationPageComponent implements OnDestroy {
 
   protected createReservation() {
     if (!this.isReservationFormValid() || !this.isGuestFormValid()) return;
-
+    this.isAuthoriseMessage = true;
     const payload = this.buildReservationDTO(this.guestForm(), this.reservationForm());
     this.reservationRequest.set(payload);
     this.wipOutput = JSON.stringify(payload);
+    this.isGuestForm = false;
     this.isAuthoriseMessage = true;
     this.startResendCounter();
   }
@@ -496,21 +497,4 @@ export class ReservationPageComponent implements OnDestroy {
   protected closeRulesPopup() {
     this.isRulesPopupOpen.set(false);
   }
-}
-
-export interface GuestDTO {
-  firstname: string | null;
-  lastname: string | null;
-  email: string | null;
-  phoneNumber: string | null;
-  carRegistration: string | null;
-  country: string | null
-}
-
-export interface ReservationDTO {
-  checkin: string | null;
-  checkout: string | null;
-  camperPlace: CamperPlaceDTO | null;
-  guest: GuestDTO | null;
-  paid: false | null;
 }
