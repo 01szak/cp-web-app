@@ -1,8 +1,9 @@
-import { Component, computed, effect, inject, output, signal } from '@angular/core';
+import { Component, computed, effect, inject, output, signal, untracked } from '@angular/core';
 import { TranslationService } from '../../../../core/services/translation.service';
 import { FaIconComponent, FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { MatCard } from '@angular/material/card';
 import {
+  MatCalendarCellClassFunction,
   MatDatepickerToggle,
   MatDateRangeInput,
   MatDateRangePicker,
@@ -16,21 +17,14 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons/faCircleQuestion';
 import { form, FormField, required, validate } from '@angular/forms/signals';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { ReservationDTO } from '../../reservation-page/reservation-page.component';
+import { ReservationDTO } from '../../models/reservation.models';
 import { ParceoService } from '../../services/parceo.service';
-
-export interface CamperPlaceTypeDTO {
-  id: number;
-  typeName: string;
-  price: number;
-}
-
-export interface CamperPlaceDTO {
-  id: number;
-  index: string;
-  type: CamperPlaceTypeDTO;
-  price: number;
-}
+import {
+  buildAvailability,
+  clampCheckout,
+  isDateSelectable,
+} from '../../utils/availability';
+import { fromIsoDate, toIsoDate } from '../../utils/date';
 
 @Component({
   selector: 'app-reservation-form',
@@ -55,7 +49,7 @@ export interface CamperPlaceDTO {
   ],
   template: `
     <h3>{{ ts.t.reservation.step1Title }}</h3>
-    <form class="form-layout gap">
+    <form class="form-layout">
       <mat-form-field appearance="outline">
         <mat-label>{{ ts.t.reservation.selectPitch }}</mat-label>
         <mat-select
@@ -96,7 +90,7 @@ export interface CamperPlaceDTO {
           <mat-spinner diameter="60"></mat-spinner>
         </div>
       } @else {
-        <mat-form-field class="datepicker" appearance="outline" (click)="dp.open()">
+        <mat-form-field class="datepicker" appearance="outline" subscriptSizing="dynamic" (click)="dp.open()">
           <mat-label>
             {{
               isCamperPlaceSelected()
@@ -107,7 +101,7 @@ export interface CamperPlaceDTO {
           <mat-hint>{{ ts.t.reservation.disabledDatesHint }}</mat-hint>
 
           <mat-date-range-input
-            [dateFilter]="occupiedDateFilter"
+            [dateFilter]="occupiedDateFilter()"
             [rangePicker]="dp"
             [disabled]="true"
           >
@@ -123,12 +117,16 @@ export interface CamperPlaceDTO {
             />
           </mat-date-range-input>
           <mat-datepicker-toggle #toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
-          <mat-date-range-picker #dp [disabled]="!isCamperPlaceSelected()"></mat-date-range-picker>
+          <mat-date-range-picker
+            [dateClass]="dateClass"
+            #dp
+            [disabled]="!isCamperPlaceSelected()"
+            touchUi
+          ></mat-date-range-picker>
 
           @if (camperPlaceOccupancyResource.error()) {
             <mat-error>{{ ts.t.error.serverError }}</mat-error>
-          }
-          @else if (
+          } @else if (
             (reservationForm.checkin().touched() || reservationForm.checkout().touched()) &&
             (isCheckinInvalid() || isCheckoutInvalid())
           ) {
@@ -168,73 +166,6 @@ export interface CamperPlaceDTO {
       gap: 20px;
     }
 
-    ::ng-deep .mat-mdc-form-field.mat-form-field-disabled {
-      opacity: 1 !important;
-
-      cursor: default;
-
-      --mdc-outlined-text-field-disabled-border-color: var(--mdc-outlined-text-field-outline-color);
-
-      --mdc-outlined-text-field-disabled-label-text-color: var(
-        --mdc-outlined-text-field-label-text-color
-      );
-
-      --mdc-outlined-text-field-disabled-input-text-color: var(
-        --mdc-outlined-text-field-input-text-color
-      );
-
-      --mdc-outlined-text-field-disabled-leading-icon-color: var(
-        --mdc-outlined-text-field-leading-icon-color
-      );
-
-      --mdc-outlined-text-field-disabled-trailing-icon-color: var(
-        --mdc-outlined-text-field-trailing-icon-color
-      );
-
-      --mat-form-field-state-disabled-outline-color: var(--mat-form-field-state-outline-color);
-
-      --mat-form-field-state-disabled-label-color: var(--mat-form-field-state-label-color);
-
-      --mat-form-field-state-disabled-input-color: var(--mat-form-field-state-input-color);
-
-      .mat-mdc-input-element:disabled,
-      .mat-date-range-input-inner:disabled {
-        color: var(
-          --mdc-outlined-text-field-input-text-color,
-          var(--mat-form-field-state-input-color, rgba(0, 0, 0, 0.87))
-        ) !important;
-
-        -webkit-text-fill-color: var(
-          --mdc-outlined-text-field-input-text-color,
-          var(--mat-form-field-state-input-color, rgba(0, 0, 0, 0.87))
-        ) !important;
-
-        cursor: default;
-      }
-
-      .mat-date-range-input-separator {
-        color: var(
-          --mdc-outlined-text-field-input-text-color,
-          var(--mat-form-field-state-input-color, rgba(0, 0, 0, 0.87))
-        ) !important;
-      }
-
-      .mdc-notched-outline__leading,
-      .mdc-notched-outline__notch,
-      .mdc-notched-outline__trailing {
-        border-color: var(
-          --mdc-outlined-text-field-outline-color,
-          var(--mat-form-field-state-outline-color, rgba(0, 0, 0, 0.38))
-        ) !important;
-      }
-
-      .mat-mdc-floating-label {
-        color: var(
-          --mdc-outlined-text-field-label-text-color,
-          var(--mat-form-field-state-label-color, rgba(0, 0, 0, 0.6))
-        ) !important;
-      }
-    }
     .final-price-text-wrapper {
       display: flex;
       flex-direction: row;
@@ -265,7 +196,6 @@ export interface CamperPlaceDTO {
     }
   `,
 })
-//TODO do not send requests when form is invalid
 export class ReservationForm {
   protected readonly ts = inject(TranslationService);
   private readonly faIconLibrary = inject(FaIconLibrary);
@@ -274,7 +204,9 @@ export class ReservationForm {
   protected formValid = output<boolean>();
   protected formValue = output<ReservationDTO>();
 
-  private camperPlaceOccupancy: null | Date[] = null;
+  private availability = computed(() =>
+    buildAvailability(this.camperPlaceOccupancyResource.value() ?? []),
+  );
 
   constructor() {
     effect(() => {
@@ -285,8 +217,8 @@ export class ReservationForm {
     // Re-check the selected range against the freshly loaded occupancy data
     // (e.g. after switching camper place). No-op while no dates are selected.
     effect(() => {
-      this.camperPlaceOccupancyResource.value();
-      this.validateDateRange();
+      this.availability();
+      untracked(() => this.validateDateRange());
     });
   }
 
@@ -304,11 +236,17 @@ export class ReservationForm {
     this.selectedCamperPlaceId(),
   );
 
-  protected calculatedPriceResource = this.parceo.calculatedPrice(() => ({
-    cpId: this.reservationModel().camperPlace?.id,
-    checkin: this.reservationModel().checkin,
-    checkout: this.reservationModel().checkout,
-  }));
+  // Invalid range (e.g. checkin === checkout) is sent as empty dates so no price request is made.
+  protected calculatedPriceResource = this.parceo.calculatedPrice(() => {
+    const { camperPlace, checkin, checkout } = this.reservationModel();
+    const isRangeValid = !this.isCheckinInvalid() && !this.isCheckoutInvalid();
+
+    return {
+      cpId: camperPlace?.id,
+      checkin: isRangeValid ? checkin : null,
+      checkout: isRangeValid ? checkout : null,
+    };
+  });
 
   protected reservationModel = signal<ReservationDTO>({
     camperPlace: null,
@@ -332,16 +270,6 @@ export class ReservationForm {
     });
   });
 
-  equalDatesError = computed(() => {
-    const errors = this.reservationForm().errors();
-    if (!Array.isArray(errors)) return null;
-
-    return errors.find((err: any) => err.kind === 'equalDatesProhibited') || null;
-  });
-
-  private selectedStartDate: Date | null = null;
-  private selectedEndDate: Date | null = null;
-
   protected isCamperPlaceInvalid = computed(() => this.reservationForm.camperPlace().invalid());
   protected isCheckinInvalid = computed(() => this.reservationForm.checkin().invalid());
   protected isCheckoutInvalid = computed(() => this.reservationForm.checkout().invalid());
@@ -358,31 +286,24 @@ export class ReservationForm {
     return this.reservationModel().camperPlace !== null;
   }
 
-  protected occupiedDateFilter = (d: Date | null): boolean => {
-    const date = d || new Date();
-    const dateStr = this.getLocalDate(date);
+  // New function reference on every selection change: the calendar only rebuilds its cells
+  // when the filter reference changes, and arrival edges become enabled once a start is picked.
+  protected occupiedDateFilter = computed(() => {
+    const availability = this.availability();
+    const { checkin, checkout } = this.reservationModel();
 
-    const occupiedDates = this.camperPlaceOccupancyResource.value() || [];
+    return (date: Date | null) =>
+      isDateSelectable(date ?? new Date(), availability, checkin, checkout);
+  });
 
-    return (
-      date.getTime() >=
-        new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()).getTime() &&
-      !occupiedDates!.includes(dateStr)
-    );
+  dateClass: MatCalendarCellClassFunction<Date> = (cellDate, view) => {
+    if (view !== 'month') return '';
+
+    return this.availability().edges.has(toIsoDate(cellDate)) ? 'edge-calendar-date' : '';
   };
-
-  private getLocalDate(date: Date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
-  }
 
   protected onCamperPlaceChange() {
     // Drop the previous place's range so it can't be retained or submitted.
-    this.selectedStartDate = null;
-    this.selectedEndDate = null;
     this.reservationModel.update((model) => ({
       ...model,
       checkin: null,
@@ -395,48 +316,32 @@ export class ReservationForm {
   }
 
   // TODO inform the user about date shift
-  protected onStartDateChange(value: Date) {
-    this.selectedStartDate = value;
+  protected onStartDateChange(value: Date | null) {
     this.reservationModel.update((model) => ({
       ...model,
-      checkin: this.getLocalDate(value),
+      checkin: value ? toIsoDate(value) : null,
     }));
     this.validateDateRange();
   }
 
-  protected onEndDateChange(value: Date) {
-    this.selectedEndDate = value;
+  // Picking a new start clears the end (null), which keeps the picker in its "pending start" state.
+  protected onEndDateChange(value: Date | null) {
     this.reservationModel.update((model) => ({
       ...model,
-      checkout: this.getLocalDate(value),
+      checkout: value ? toIsoDate(value) : null,
     }));
     this.validateDateRange();
   }
 
   protected validateDateRange() {
-    if (!this.selectedEndDate || !this.selectedStartDate) return;
+    const { checkin, checkout } = this.reservationModel();
+    if (!checkin || !checkout) return;
 
-    const msInDay = 1000 * 60 * 60 * 24;
-    const daysBetween = Math.round(
-      (this.selectedEndDate.getTime() - this.selectedStartDate.getTime()) / msInDay,
+    const clampedCheckout = toIsoDate(
+      clampCheckout(fromIsoDate(checkin), fromIsoDate(checkout), this.availability()),
     );
+    if (clampedCheckout === checkout) return;
 
-    for (let i = 0; i <= daysBetween; i++) {
-      const checkingDate = new Date(this.selectedStartDate);
-      checkingDate.setDate(checkingDate.getDate() + i);
-
-      if (!this.occupiedDateFilter(checkingDate)) {
-        const maxValidDate = new Date(checkingDate);
-        maxValidDate.setDate(checkingDate.getDate() - 1);
-
-        this.reservationModel.update((r) => ({
-          ...r,
-          checkout: this.getLocalDate(maxValidDate),
-        }));
-        this.selectedEndDate = maxValidDate;
-
-        return;
-      }
-    }
+    this.reservationModel.update((model) => ({ ...model, checkout: clampedCheckout }));
   }
 }

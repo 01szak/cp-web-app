@@ -313,7 +313,7 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       currency: 'zł',
       selectDates: 'Wybierz termin',
       selectPitchFirst: 'Najpierw wybierz parcele',
-      disabledDatesHint: 'Wyszarzona data oznacza że parcela jest niedostępna',
+      disabledDatesHint: 'Szare: zajęte. Z obwódką: wjazd innego gościa, wybierz jako dzień wyjazdu.',
       invalidDateRange: 'Wybierz poprawny zakres dat',
       priceTooltip:
         'Przedstawiona cena jest tylko ceną poglądową, na poziomie rezerwacji online nie uiszczasz żadnych opłat, zostaną one pobrane dopiero na miejscu przy kasie',
@@ -493,7 +493,7 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       currency: 'PLN',
       selectDates: 'Select dates',
       selectPitchFirst: 'First select a pitch',
-      disabledDatesHint: 'Grayed out date means the pitch is occupied',
+      disabledDatesHint: "Gray: taken. Outlined: another guest's arrival, pick it as your departure day.",
       invalidDateRange: 'Select a valid date range',
       priceTooltip:
         'The price shown is only an estimate, you do not pay anything online during reservation, payment will be collected at the reception desk',

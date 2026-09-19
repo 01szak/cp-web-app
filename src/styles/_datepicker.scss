@@ -1,0 +1,54 @@
+// The calendar popup is rendered in a CDK overlay outside the component tree,
+// so its styles have to be global.
+
+// Reservation date range: another guest's arrival/departure edge day.
+button.mat-calendar-body-cell.edge-calendar-date > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+  border-color: var(--mat-sys-primary);
+  background-color: var(
+    --mat-datepicker-calendar-date-hover-state-background-color,
+    color-mix(in srgb, var(--mat-sys-on-surface) calc(var(--mat-sys-hover-state-layer-opacity) * 100%), transparent)
+  );
+}
+
+.mat-datepicker-content {
+  --mat-datepicker-calendar-date-today-outline-color: transparent;
+  --mat-datepicker-calendar-date-today-disabled-state-outline-color: transparent;
+  --mat-datepicker-calendar-date-today-selected-state-outline-color: transparent;
+}
+
+// The date range inputs are disabled (the whole field opens the picker on click),
+// but should look like a regular enabled outlined field.
+.mat-mdc-form-field.mat-form-field-disabled {
+  opacity: 1 !important;
+  cursor: default;
+
+  --mdc-outlined-text-field-disabled-border-color: var(--mdc-outlined-text-field-outline-color);
+  --mdc-outlined-text-field-disabled-label-text-color: var(--mdc-outlined-text-field-label-text-color);
+  --mdc-outlined-text-field-disabled-input-text-color: var(--mdc-outlined-text-field-input-text-color);
+  --mdc-outlined-text-field-disabled-leading-icon-color: var(--mdc-outlined-text-field-leading-icon-color);
+  --mdc-outlined-text-field-disabled-trailing-icon-color: var(--mdc-outlined-text-field-trailing-icon-color);
+  --mat-form-field-state-disabled-outline-color: var(--mat-form-field-state-outline-color);
+  --mat-form-field-state-disabled-label-color: var(--mat-form-field-state-label-color);
+  --mat-form-field-state-disabled-input-color: var(--mat-form-field-state-input-color);
+
+  .mat-mdc-input-element:disabled,
+  .mat-date-range-input-inner:disabled {
+    color: var(--mdc-outlined-text-field-input-text-color, var(--mat-form-field-state-input-color, rgba(0, 0, 0, 0.87))) !important;
+    -webkit-text-fill-color: var(--mdc-outlined-text-field-input-text-color, var(--mat-form-field-state-input-color, rgba(0, 0, 0, 0.87))) !important;
+    cursor: default;
+  }
+
+  .mat-date-range-input-separator {
+    color: var(--mdc-outlined-text-field-input-text-color, var(--mat-form-field-state-input-color, rgba(0, 0, 0, 0.87))) !important;
+  }
+
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: var(--mdc-outlined-text-field-outline-color, var(--mat-form-field-state-outline-color, rgba(0, 0, 0, 0.38))) !important;
+  }
+
+  .mat-mdc-floating-label {
+    color: var(--mdc-outlined-text-field-label-text-color, var(--mat-form-field-state-label-color, rgba(0, 0, 0, 0.6))) !important;
+  }
+}
