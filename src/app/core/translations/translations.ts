@@ -297,7 +297,7 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       startBtn: 'Przejdź do rezerwacji',
       verificationTitle: 'Weryfikacja',
       verificationDesc:
-        'Na podany adres został wysłany mail weryfikacyjny, po autoryzacji rezerwacja zostanie zapisana',
+        'Na podany adres został wysłany mail weryfikacyjny aktywny przez następne 15 min. Po zatwierdzeniu rezerwacja zostanie potwierdzona w systemie',
       noEmailPrefix: 'Nie dostałeś maila? Odczekaj',
       noEmailSuffix: 'sekund i spróbuj ponownie',
       resendBtn: 'Wyślij ponownie',
@@ -313,7 +313,8 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       currency: 'zł',
       selectDates: 'Wybierz termin',
       selectPitchFirst: 'Najpierw wybierz parcele',
-      disabledDatesHint: 'Szare: zajęte. Z obwódką: wjazd innego gościa, wybierz jako dzień wyjazdu.',
+      disabledDatesHint:
+        'Szare: zajęte. Z obwódką: wjazd innego gościa, wybierz jako dzień wyjazdu.',
       invalidDateRange: 'Wybierz poprawny zakres dat',
       priceTooltip:
         'Przedstawiona cena jest tylko ceną poglądową, na poziomie rezerwacji online nie uiszczasz żadnych opłat, zostaną one pobrane dopiero na miejscu przy kasie',
@@ -334,12 +335,25 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       },
       areaCode: 'Numer kierunkowy',
       warningInfo: {
-        prefix: "Klikając \"Wyślij\" akceptujesz",
+        prefix: 'Klikając "Wyślij" akceptujesz',
         linkText: 'regulamin prywatności oraz regulamin firmy',
         suffix: '© 2026 Camper Park Stary Folwark',
         popup: {
           title: 'Regulamin',
-          body: 'Treść regulaminu prywatności oraz regulaminu firmy zostanie uzupełniona.',
+          body:
+            'Administratorem Pani/Pana danych osobowych jest Camper Park Stary Folwark Izabela Łukaszewska, z siedzibą przy Stary Folwark 55C,16-402 Suwałki, NIP 8441528757,REGON 200675128 \n' +
+            'Cel przetwarzania danych:\n' +
+            'Zarządzanie rezerwacjami i realizacja umowy o świadczenie usług kempingowych. \n' +
+            'Komunikacja z Panią/Panem w związku z rezerwacją (np. informacje o zmianach, anulacjach). \n' +
+            'W celach marketingowych, udostępnianie zdjęć z terenu kempingu\n' +
+            'Podstawa prawna:\n' +
+            'Zgodnie z art. 6 ust. 1 lit. a) Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 (RODO) przetwarzamy Pani/Pana dane osobowe na podstawie wyrażonej zgody w zakresie, w jakim jest ona udzielana. \n' +
+            'Zgodnie z art. 6 ust. 1 lit. b) RODO przetwarzamy Pani/Pana dane osobowe, jeśli są niezbędne do wykonania umowy o świadczenie usług kempingowych. \n' +
+            'Zgodnie z art. 6 ust. 1 lit. f) RODO przetwarzamy Pani/Pana dane osobowe w zakresie, w jakim jest to konieczne w celu realizacji naszych prawnie uzasadnionych interesów, np. w celu prowadzenia statystyk.\n' +
+            'Odbiorcy danych:\n' +
+            'Pani/Pana dane osobowe mogą być przekazywane organom państwowym na podstawie obowiązujących przepisów prawa. \n' +
+            'Okres przechowywania danych:\n' +
+            'Pani/Pana dane osobowe będą przechowywane przez okres niezbędny do realizacji celów przetwarzania, a po tym okresie przez okres wymagany przepisami prawa.',
           close: 'Zamknij',
         },
       },
@@ -477,7 +491,7 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       startBtn: 'Proceed to reservation',
       verificationTitle: 'Verification',
       verificationDesc:
-        'A verification email has been sent to the address provided. The reservation will be saved after authorization',
+        'A verification email has been sent to the provided address, that will be active for the next 15 minutes. The reservation will be saved after authorization',
       noEmailPrefix: "Didn't receive the email? Wait",
       noEmailSuffix: 'seconds and try again',
       resendBtn: 'Resend',
@@ -493,7 +507,8 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       currency: 'PLN',
       selectDates: 'Select dates',
       selectPitchFirst: 'First select a pitch',
-      disabledDatesHint: "Gray: taken. Outlined: another guest's arrival, pick it as your departure day.",
+      disabledDatesHint:
+        "Gray: taken. Outlined: another guest's arrival, pick it as your departure day.",
       invalidDateRange: 'Select a valid date range',
       priceTooltip:
         'The price shown is only an estimate, you do not pay anything online during reservation, payment will be collected at the reception desk',
@@ -519,7 +534,12 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
         suffix: '© 2026 Camper Park Stary Folwark',
         popup: {
           title: 'Rules',
-          body: 'The privacy policy and company rules content will be provided here.',
+          body:
+            'The administrator of your personal data is Camper Park Stary Folwark Izabela Łukaszewska, with its registered office at Stary Folwark 55C, 16-402 Suwałki, NIP 8441528757, REGON 200675128\n' +
+            'Purpose of data processing: Managing reservations and performing the camping services contract. Communication with you regarding the reservation (e.g., information about changes, cancellations). For marketing purposes, sharing photos from the campsite.\n' +
+            'Legal basis: According to Article 6(1)(a) of the European Parliament and Council Regulation (EU) 2016/679 (GDPR), we process your personal data based on the consent you have given, to the extent that it is granted. According to Article 6(1)(b) GDPR, we process your personal data if it is necessary to fulfill the camping services contract. According to Article 6(1)(f) GDPR, we process your personal data to the extent necessary for the realization of our legitimate interests, such as conducting statistics.\n' +
+            'Recipients of data: Your personal data may be provided to public authorities based on applicable legal provisions.\n' +
+            'Data retention period: Your personal data will be stored for as long as necessary to achieve the purposes of processing, and after that period, for the time required by law.',
           close: 'Close',
         },
       },
