@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
-import { CamperPlaceDTO, ReservationDTO } from '../models/reservation.models';
+import { CamperPlaceDTO, CamperPlaceTypeDTO, ReservationDTO } from '../models/reservation.models';
 
 interface CalculatedPriceRequest {
   cpId: number | undefined;
@@ -14,22 +14,23 @@ interface CalculatedPriceRequest {
   providedIn: 'root',
 })
 export class ParceoService {
+
   private readonly http = inject(HttpClient);
 
-  camperPlaces() {
+  camperPlaceTypes() {
     return rxResource({
-      stream: () =>
-        this.http.get<CamperPlaceDTO[]>('/api/camperPlace'),
+      stream: () => this.http.get<CamperPlaceTypeDTO[]>('/api/camperPlaceType'),
     });
   }
 
-  camperPlaceOccupancy(camperPlaceId: () => number | null) {
+  /** Pitches free for the whole stay; idle until a stay is given. */
+  campAvailability(stay: () => { checkin: string; checkout: string } | undefined) {
     return rxResource({
-      params: camperPlaceId,
-      stream: ({ params }) => {
-        if (!params) return of([]);
-        return this.http.get<string[][]>(`/api/camperPlace/occupancy/${params}`);
-      },
+      params: stay,
+      stream: ({ params }) =>
+        this.http.get<CamperPlaceDTO[]>(
+          `/api/camperPlace/available/${params.checkin}/${params.checkout}`,
+        ),
     });
   }
 
@@ -37,9 +38,10 @@ export class ParceoService {
     return rxResource({
       params: request,
       stream: ({ params }) => {
-        if (!params.cpId || !params.checkin || !params.checkout) return of('');
-        return this.http.get<string>(
-          `/api/camperPlace/calcPrice/${params.cpId}/${params.checkin}/${params.checkout}`);
+        if (!params.cpId || !params.checkin || !params.checkout) return of(null);
+        return this.http.get<number>(
+          `/api/camperPlace/calcPrice/${params.cpId}/${params.checkin}/${params.checkout}`,
+        );
       },
     });
   }
@@ -49,7 +51,7 @@ export class ParceoService {
       stream: () => {
         const id = targetId();
         if (!id) return of(null);
-        return this.http.post(`/api/web/reservation/verify/${id}`, null);
+        return this.http.post(`/api/web/reservation/verify/${id}`, null, { responseType: 'text' });
       },
     });
   }
@@ -59,7 +61,8 @@ export class ParceoService {
       params: request,
       stream: ({ params }) => {
         if (!params) return of(null);
-        return this.http.post('/api/web/reservation/init', params)},
+        return this.http.post('/api/web/reservation/init', params, { responseType: 'text' });
+      },
     });
   }
 }

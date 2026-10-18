@@ -26,7 +26,7 @@ const API_REQUEST_HEADERS: HeadersInit = {
 };
 
 app.use((req, res, next) => {
-  console.log('🔥 REQUEST:', {
+  console.log('REQUEST:', {
     path: req.path,
     method: req.method,
     url: req.originalUrl,
@@ -43,7 +43,7 @@ app.use((req, res, next) => {
 });
 
 async function parceoFetch(path: string, options: RequestInit = {}) {
-  console.log(`SENDING REQUEST TO: ${API_URL}/${path} WITH OPTIONS: ${options}`);
+  console.log(`SENDING REQUEST TO: ${API_URL}/${path} WITH OPTIONS: ${JSON.stringify(options)}`);
   try {
     return fetch(`${API_URL}/${path}`, {
       ...options,
@@ -54,53 +54,42 @@ async function parceoFetch(path: string, options: RequestInit = {}) {
   }
 }
 
-app.get('/api/camperPlace', async (req, res) => {
-  const response = await parceoFetch('camperPlace');
-  const data = await response.json();
-  res.status(response.status).json(data);
-});
+function proxyGet(route: string, target: (params: Record<string, string>) => string) {
+  app.get(route, async (req, res, next) => {
+    try {
+      const response = await parceoFetch(target(req.params as Record<string, string>));
+      res.status(response.status).json(await response.json());
+    } catch (error) {
+      next(error);
+    }
+  });
+}
 
-app.get('/api/camperPlace/occupancy/:id', async (req, res) => {
-  const response = await parceoFetch(`camperPlace/occupancy/${req.params.id}`);
-  const data = await response.json();
-  res.status(response.status).json(data);
-});
+function proxyPost(route: string, target: (params: Record<string, string>) => string, withBody: boolean) {
+  app.post(route, async (req, res, next) => {
+    try {
+      const response = await parceoFetch(target(req.params as Record<string, string>), {
+        method: 'POST',
+        ...(withBody && { body: JSON.stringify(req.body) }),
+      });
+      res.status(response.status).send(await response.text());
+    } catch (error) {
+      next(error);
+    }
+  });
+}
 
-app.get('/api/camperPlace/calcPrice/:id/:checkin/:checkout', async (req, res) => {
-  const { id, checkin, checkout } = req.params;
-  const response = await parceoFetch(`camperPlace/calcPrice/${id}/${checkin}/${checkout}`);
-  const data = await response.json();
-  res.status(response.status).json(data);
-});
+proxyGet('/api/camperPlace/occupancy/:cpId', ({ cpId }) => `camperPlace/occupancy/${cpId}`);
+proxyGet(
+  '/api/camperPlace/calcPrice/:cpId/:checkin/:checkout',
+  ({ cpId, checkin, checkout }) => `camperPlace/calcPrice/${cpId}/${checkin}/${checkout}`,
+);
+proxyGet('/api/camperPlace/available/:from/:to', ({ from, to }) => `camperPlace/available/${from}/${to}`);
+proxyPost('/api/camperPlace/findBy', () => 'camperPlace/findBy', true);
 
-app.post('/api/web/reservation/init', async (req, res, next) => {
-  try {
-    const response = await parceoFetch('web/reservation/init', {
-      method: 'POST',
-      body: JSON.stringify(req.body),
-    });
-    const text = await response.text();
-    res
-      .status(response.status)
-      .send(text);
-  } catch (error) {
-    next(error);
-  }
-});
-
-app.post('/api/web/reservation/verify/:targetId', async (req, res, next) => {
-  const params: { targetId: string } = req.params;
-  try {
-    const response = await parceoFetch(`web/reservation/verify/${params.targetId}`, {
-      method: 'POST',
-      body: JSON.stringify(req.body),
-    });
-    const text = await response.text();
-    res.status(response.status).send(text);
-  } catch (error) {
-    next(error);
-  }
-});
+// The verify endpoint takes only the path variable; the init endpoint takes a ReservationDTO body.
+proxyPost('/api/web/reservation/init', () => 'web/reservation/init', true);
+proxyPost('/api/web/reservation/verify/:targetId', ({ targetId }) => `web/reservation/verify/${targetId}`, false);
 
 /**
  * Serve static files from /browser

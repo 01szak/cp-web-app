@@ -10,6 +10,9 @@ import {
 import { isValidPhoneNumber, parsePhoneNumberFromString, type CountryCode } from 'libphonenumber-js';
 import { buildCountryCallingCodes } from '../../../../shared/data/country-calling-codes';
 import { CountryCallingCode } from '../../../../shared/models/country-calling-code.model';
+import { GuestDTO } from '../../models/reservation.models';
+
+const DEFAULT_COUNTRY = 'PL';
 
 @Component({
   selector: 'app-guest-form',
@@ -24,110 +27,158 @@ import { CountryCallingCode } from '../../../../shared/models/country-calling-co
     MatOption,
   ],
   template: `
-    <h3>{{ ts.t.reservation.step2Title }}</h3>
-    <form class="form-layout">
-      <mat-form-field appearance="outline">
-        <mat-label>{{ ts.t.reservation.firstname }}</mat-label>
-        <input matInput type="text" [formField]="guestForm.firstname" />
-        @if (guestForm.firstname().touched() && isFirstnameInvalid()) {
-          @for (error of guestForm.firstname().errors(); track error) {
-            <mat-error>{{ error.message }}</mat-error>
-          }
-        }
-      </mat-form-field>
+    @let t = ts.t.reservation;
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ ts.t.reservation.lastname }}</mat-label>
-        <input matInput type="text" [formField]="guestForm.lastname" />
-        @if (guestForm.lastname().touched() && isLastnameInvalid()) {
-          @for (error of guestForm.lastname().errors(); track error) {
-            <mat-error>{{ error.message }}</mat-error>
-          }
-        }
-      </mat-form-field>
+    <div class="guest-head">
+      <h2 class="rv-card-title">{{ t.guestTitle }}</h2>
+      <p class="rv-hint guest-desc">{{ t.guestDesc }}</p>
+    </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>{{ ts.t.reservation.email }}</mat-label>
-        <input
-          matInput
-          type="email"
-          [formField]="guestForm.email"
-          [placeholder]="'xyz@example.com'"
-        />
-        @if (guestForm.email().touched() && isEmailInvalid()) {
-          @for (error of guestForm.email().errors(); track error) {
-            <mat-error>{{ error.message }}</mat-error>
-          }
-        }
-      </mat-form-field>
-
-      <div class="phone-number-fields">
-        <mat-form-field appearance="outline" class="area-code-field">
-          <mat-label>{{ ts.t.reservation.areaCode }}</mat-label>
-          <input
-            matInput
-            type="text"
-            [matAutocomplete]="areaCodeAuto"
-            (input)="onAreaCodeQueryChange($event)"
-            [formField]="guestForm.areaCode"
-          />
-          <mat-autocomplete #areaCodeAuto="matAutocomplete" [displayWith]="displayAreaCode">
-            @for (country of filteredCountryCallingCodes(); track country.iso2) {
-              <mat-option [value]="country">
-                <span class="fi fi-{{ country.iso2.toLowerCase() }}"></span>
-                +{{ country.dialCode }} {{ country.name }}
-              </mat-option>
-            }
-          </mat-autocomplete>
-          @if (guestForm.areaCode().touched() && isAreaCodeInvalid()) {
-            @for (error of guestForm.areaCode().errors(); track error) {
-              <mat-error>{{ error.message }}</mat-error>
-            }
+    <form class="guest-form" (submit)="$event.preventDefault()">
+      <div class="name-row">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ t.firstname }}</mat-label>
+          <input matInput type="text" autocomplete="given-name" [formField]="guestForm.firstname" />
+          @if (firstnameError(); as error) {
+            <mat-error>{{ error }}</mat-error>
           }
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="phone-number-field">
-          <mat-label>{{ ts.t.reservation.phone }}</mat-label>
-          <input matInput type="text" [formField]="guestForm.phoneNumber" />
-          @if (guestForm.phoneNumber().touched() && isPhoneNumberInvalid()) {
-            @for (error of guestForm.phoneNumber().errors(); track error) {
-              <mat-error>{{ error.message }}</mat-error>
-            }
+        <mat-form-field appearance="outline">
+          <mat-label>{{ t.lastname }}</mat-label>
+          <input matInput type="text" autocomplete="family-name" [formField]="guestForm.lastname" />
+          @if (lastnameError(); as error) {
+            <mat-error>{{ error }}</mat-error>
           }
         </mat-form-field>
       </div>
 
       <mat-form-field appearance="outline">
-        <mat-label>{{ ts.t.reservation.registration }}</mat-label>
-        <input matInput type="text" [formField]="guestForm.carRegistration" />
-        @if (guestForm.carRegistration().touched() && isCarRegistrationInvalid()) {
-          @for (error of guestForm.carRegistration().errors(); track error) {
-            <mat-error>{{ error.message }}</mat-error>
+        <mat-label>{{ t.email }}</mat-label>
+        <input matInput type="email" autocomplete="email" [formField]="guestForm.email" />
+        @if (emailError(); as error) {
+          <mat-error>{{ error }}</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="phone-row">
+        <mat-form-field appearance="outline" class="area-code-field">
+          <mat-label>{{ t.areaCode }}</mat-label>
+          @if (guestModel().areaCode; as code) {
+            <span matTextPrefix class="fi fi-{{ code.iso2.toLowerCase() }} prefix-flag" aria-hidden="true"></span>
           }
+          <input
+            matInput
+            type="text"
+            autocomplete="off"
+            [matAutocomplete]="areaCodeAuto"
+            (input)="onAreaCodeQueryChange($event)"
+            [formField]="guestForm.areaCode"
+          />
+          <mat-autocomplete #areaCodeAuto="matAutocomplete" [displayWith]="displayAreaCode" panelWidth="280px">
+            @for (country of filteredCountryCallingCodes(); track country.iso2) {
+              <mat-option [value]="country">
+                <span class="fi fi-{{ country.iso2.toLowerCase() }} option-flag" aria-hidden="true"></span>
+                +{{ country.dialCode }} {{ country.name }}
+              </mat-option>
+            }
+          </mat-autocomplete>
+          @if (areaCodeError(); as error) {
+            <mat-error>{{ error }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="phone-field">
+          <mat-label>{{ t.phone }}</mat-label>
+          <input matInput type="tel" autocomplete="tel-national" [formField]="guestForm.phoneNumber" />
+          @if (phoneNumberError(); as error) {
+            <mat-error>{{ error }}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ t.registration }}</mat-label>
+        <input
+          matInput
+          type="text"
+          class="registration-input"
+          autocomplete="off"
+          [placeholder]="t.registrationPlaceholder"
+          [formField]="guestForm.carRegistration"
+        />
+        @if (carRegistrationError(); as error) {
+          <mat-error>{{ error }}</mat-error>
         }
       </mat-form-field>
     </form>
   `,
   styles: `
-    .phone-number-fields {
+    :host {
       display: flex;
-      gap: 10px;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .guest-desc {
+      margin-top: 6px;
+      font-size: 14px;
+    }
+
+    .guest-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    mat-form-field {
       width: 100%;
+    }
+
+    .name-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+
+      @media (max-width: 767px) {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+      }
+    }
+
+    .phone-row {
+      display: flex;
+      gap: 8px;
     }
 
     .area-code-field {
+      flex: 0 0 132px;
+
+      @media (max-width: 767px) {
+        flex-basis: 112px;
+      }
+    }
+
+    .phone-field {
       flex: 1;
-      width: 100%;
+      min-width: 0;
     }
 
-    .phone-number-field {
-      flex: 2;
-      width: 100%;
+    .prefix-flag {
+      margin-right: 6px;
     }
 
-    .fi {
+    .option-flag {
       margin-right: 6px;
       vertical-align: middle;
+    }
+
+    .registration-input {
+      text-transform: uppercase;
+
+      &::placeholder {
+        text-transform: none;
+      }
     }
   `,
 })
@@ -135,14 +186,7 @@ export class GuestFormComponent {
   protected readonly ts = inject(TranslationService);
 
   public formValid = output<boolean>();
-  public formValue = output<{
-    firstname: string;
-    lastname: string;
-    email: string;
-    phoneNumber: string;
-    carRegistration: string;
-    country: string
-  }>();
+  public formValue = output<GuestDTO>();
 
   constructor() {
     effect(() => {
@@ -168,15 +212,13 @@ export class GuestFormComponent {
     areaCode: CountryCallingCode | null;
     phoneNumber: string;
     carRegistration: string;
-    country: string | null
   }>({
-    country: null,
-    areaCode: null,
+    areaCode: this.countryCallingCodes().find((country) => country.iso2 === DEFAULT_COUNTRY) ?? null,
     carRegistration: '',
     email: '',
     firstname: '',
     lastname: '',
-    phoneNumber: ''
+    phoneNumber: '',
   });
 
   protected guestForm = form(this.guestModel, (schema) => {
@@ -203,23 +245,15 @@ export class GuestFormComponent {
     });
   });
 
-  protected isFirstnameInvalid = computed(() => this.guestForm.firstname().invalid());
-  protected isLastnameInvalid = computed(() => this.guestForm.lastname().invalid());
-  protected isEmailInvalid = computed(() => this.guestForm.email().invalid());
-  protected isAreaCodeInvalid = computed(() => this.guestForm.areaCode().invalid());
-  protected isPhoneNumberInvalid = computed(() => this.guestForm.phoneNumber().invalid());
-  protected isCarRegistrationInvalid = computed(() => this.guestForm.carRegistration().invalid());
+  // One message per field; shown once the field was touched.
+  protected firstnameError = computed(() => this.firstError(this.guestForm.firstname()));
+  protected lastnameError = computed(() => this.firstError(this.guestForm.lastname()));
+  protected emailError = computed(() => this.firstError(this.guestForm.email()));
+  protected areaCodeError = computed(() => this.firstError(this.guestForm.areaCode()));
+  protected phoneNumberError = computed(() => this.firstError(this.guestForm.phoneNumber()));
+  protected carRegistrationError = computed(() => this.firstError(this.guestForm.carRegistration()));
 
-  protected areAllFieldsValid = computed(() => {
-    return (
-      !this.isFirstnameInvalid() &&
-      !this.isLastnameInvalid() &&
-      !this.isEmailInvalid() &&
-      !this.isAreaCodeInvalid() &&
-      !this.isPhoneNumberInvalid() &&
-      !this.isCarRegistrationInvalid()
-    );
-  });
+  protected areAllFieldsValid = computed(() => this.guestForm().valid());
 
   protected displayAreaCode = (country: CountryCallingCode | null): string =>
     country ? `+${country.dialCode}` : '';
@@ -231,21 +265,23 @@ export class GuestFormComponent {
     }
   }
 
-  private buildOutputValue() {
+  private firstError(field: { touched: () => boolean; errors: () => readonly { message?: string }[] }) {
+    if (!field.touched()) return null;
+    return field.errors()[0]?.message ?? null;
+  }
+
+  private buildOutputValue(): GuestDTO {
     const model = this.guestModel();
     return {
       firstname: model.firstname,
       lastname: model.lastname,
       email: model.email,
       phoneNumber: model.areaCode
-        ? (parsePhoneNumberFromString(
-            model.phoneNumber,
-            model.areaCode.iso2 as CountryCode,
-          )?.number ?? `+${model.areaCode.dialCode}${model.phoneNumber}`)
+        ? (parsePhoneNumberFromString(model.phoneNumber, model.areaCode.iso2 as CountryCode)?.number ??
+          `+${model.areaCode.dialCode}${model.phoneNumber}`)
         : model.phoneNumber,
-      carRegistration: model.carRegistration,
-      country: model.areaCode?.iso2 || ''
-    }
+      carRegistration: model.carRegistration.toUpperCase(),
+      country: model.areaCode?.iso2 || '',
+    };
   }
-
 }

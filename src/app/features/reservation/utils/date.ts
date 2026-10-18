@@ -16,8 +16,21 @@ export function addDays(date: Date, days: number): Date {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days);
 }
 
+export function addMonths(date: Date, months: number): Date {
+  return new Date(date.getFullYear(), date.getMonth() + months, 1);
+}
+
+export function startOfMonth(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
 export function startOfToday(): Date {
   const now = new Date();
 
   return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
+/** Number of nights between two yyyy-mm-dd dates. */
+export function nightsBetween(checkin: string, checkout: string): number {
+  return Math.round((fromIsoDate(checkout).getTime() - fromIsoDate(checkin).getTime()) / 86_400_000);
 }
