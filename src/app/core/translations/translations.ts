@@ -116,11 +116,9 @@ export interface PluralForms {
 export interface ReservationTranslations {
   eyebrow: string;
   pageTitle: string;
-  startTitle: string;
   startDesc: string;
   startBtn: string;
   pitchTypesTitle: string;
-  pitchNumbers: string;
   fromPrice: string;
   perNight: string;
   currency: string;
@@ -343,12 +341,10 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
     reservation: {
       eyebrow: 'REZERWACJA ONLINE',
       pageTitle: 'Zarezerwuj parcelę',
-      startTitle: 'Zarezerwuj parcelę nad Wigrami',
       startDesc:
         'Wybierz termin, a pokażemy wolne w nim parcele. Potem podaj dane kontaktowe i potwierdź rezerwację linkiem z maila. Online nic nie płacisz.',
       startBtn: 'Rozpocznij rezerwację',
       pitchTypesTitle: 'Rodzaje parcel',
-      pitchNumbers: 'nr',
       fromPrice: 'od',
       perNight: '/ doba',
       currency: 'zł',
@@ -567,12 +563,10 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
     reservation: {
       eyebrow: 'ONLINE BOOKING',
       pageTitle: 'Book a pitch',
-      startTitle: 'Book a pitch by Lake Wigry',
       startDesc:
         "Pick your dates and we'll show the pitches free at that time. Then enter your contact details and confirm the booking with the link we email you. You pay nothing online.",
       startBtn: 'Start booking',
       pitchTypesTitle: 'Pitch types',
-      pitchNumbers: 'no.',
       fromPrice: 'from',
       perNight: '/ night',
       currency: 'PLN',

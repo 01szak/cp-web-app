@@ -39,7 +39,7 @@ const STEPS: Step[] = ['STAY', 'GUEST', 'SENT'];
             <div class="start">
               <section class="start-intro">
                 <p class="rv-eyebrow">{{ t.eyebrow }}</p>
-                <h1 class="rv-title start-title">{{ t.startTitle }}</h1>
+                <h1 class="rv-title start-title">{{ t.pageTitle }}</h1>
                 <p class="rv-text start-desc">{{ t.startDesc }}</p>
                 <div>
                   <button
@@ -72,7 +72,7 @@ const STEPS: Step[] = ['STAY', 'GUEST', 'SENT'];
                           <span>
                             <strong>{{ type.typeName }}</strong>
                             <span class="rv-hint type-numbers"
-                              >{{ t.pitchNumbers }} {{ type.typeName }}</span
+                              >{{ type.typeName }}</span
                             >
                           </span>
                           <span class="type-price">

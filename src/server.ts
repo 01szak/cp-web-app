@@ -43,7 +43,7 @@ app.use((req, res, next) => {
 });
 
 async function parceoFetch(path: string, options: RequestInit = {}) {
-  console.log(`SENDING REQUEST TO: ${API_URL}/${path} WITH OPTIONS: ${JSON.stringify(options)}`);
+  console.log(`SENDING REQUEST TO: ${API_URL}/${path}`);
   try {
     return fetch(`${API_URL}/${path}`, {
       ...options,
