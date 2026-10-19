@@ -8,6 +8,7 @@
 @use './styles/layout' as *;
 @use './styles/typography' as *;
 @use './styles/datepicker';
+@use './styles/reservation';
 
 html {
   height: 100%;
@@ -19,6 +20,45 @@ html {
       ),
       typography: Roboto,
       density: 0,
+    )
+  );
+
+  // Brand colours instead of Material's default blue.
+  @include mat.theme-overrides(
+    (
+      primary: #3e4a27,
+      on-primary: #f3f1e7,
+      primary-container: #e9dcb4,
+      on-primary-container: #1f1f1f,
+      secondary-container: #e9dcb4,
+      on-secondary-container: #1f1f1f,
+      error: #9a4a1e,
+      outline: #8a8672,
+    )
+  );
+
+  @include mat.form-field-overrides(
+    (
+      outlined-container-shape: 8px,
+      outlined-outline-color: #8a8672,
+      outlined-hover-outline-color: #3e4a27,
+      outlined-focus-outline-color: #3e4a27,
+      outlined-focus-label-text-color: #3e4a27,
+      outlined-label-text-color: #6f6c60,
+      outlined-input-text-color: #1f1f1f,
+    )
+  );
+
+  @include mat.datepicker-overrides(
+    (
+      calendar-date-selected-state-background-color: #3e4a27,
+      calendar-date-selected-state-text-color: #f3f1e7,
+      calendar-date-in-range-state-background-color: #e9dcb4,
+      calendar-date-today-outline-color: #c2a14a,
+      calendar-date-today-disabled-state-outline-color: transparent,
+      calendar-date-today-selected-state-outline-color: transparent,
+      calendar-date-disabled-state-text-color: #b5b2a5,
+      calendar-container-background-color: transparent,
     )
   );
 }

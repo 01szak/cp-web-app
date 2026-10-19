@@ -107,47 +107,95 @@ export interface RulesPopupTranslations {
   close: string;
 }
 
-export interface WarningInfoTranslations {
-  prefix: string;
-  linkText: string;
-  suffix: string;
-  popup: RulesPopupTranslations;
+export interface PluralForms {
+  one: string;
+  few: string;
+  many: string;
 }
 
 export interface ReservationTranslations {
-  introTitle: string;
-  introDesc: string;
+  eyebrow: string;
+  pageTitle: string;
+  startDesc: string;
   startBtn: string;
-  verificationTitle: string;
-  verificationDesc: string;
-  noEmailPrefix: string;
-  noEmailSuffix: string;
-  resendBtn: string;
-  retryBtn: string;
-  backBtn: string;
-  nextBtn: string;
-  sendBtn: string;
-  verifySuccessTitle: string;
-  verifySuccessDesc: string;
-  step1Title: string;
-  selectPitch: string;
-  pitchPriceLabel: string;
+  pitchTypesTitle: string;
+  fromPrice: string;
+  perNight: string;
   currency: string;
-  selectDates: string;
-  selectPitchFirst: string;
-  disabledDatesHint: string;
-  invalidDateRange: string;
-  priceTooltip: string;
-  suggestedPrice: string;
-  step2Title: string;
+  mapTitle: string;
+  mapZoom: string;
+  mapHint: string;
+  mapAlt: string;
+  close: string;
+  steps: { stay: string; guest: string; confirm: string };
+  stepLabel: string;
+  stepOf: string;
+  nextLabel: string;
+  datesTitle: string;
+  datesHintStart: string;
+  datesHintEnd: string;
+  prevMonth: string;
+  nextMonth: string;
+  legendStay: string;
+  legendFull: string;
+  datesField: string;
+  datesPlaceholder: string;
+  change: string;
+  showFreePitches: string;
+  pitchesTitle: string;
+  pitchesTitleShort: string;
+  freeCountLabel: string;
+  freeCountOf: string;
+  filterAll: string;
+  filterLabel: string;
+  pitchLabel: string;
+  showAllPitches: string;
+  takenInRange: string;
+  noFreePitches: string;
+  noFreeDays: string;
+  seeOnMap: string;
+  mapShort: string;
+  selectPitchHint: string;
+  summaryTitle: string;
+  checkin: string;
+  checkout: string;
+  pitch: string;
+  term: string;
+  nightsLabel: string;
+  estimatedPrice: string;
+  paymentInfo: string;
+  nights: PluralForms;
+  guestTitle: string;
+  guestDesc: string;
   firstname: string;
   lastname: string;
   email: string;
   areaCode: string;
   phone: string;
   registration: string;
+  registrationPlaceholder: string;
+  consentPrefix: string;
+  consentRules: string;
+  consentAnd: string;
+  consentPrivacy: string;
+  backBtn: string;
+  nextBtn: string;
+  nextToGuest: string;
+  sendBtn: string;
+  retryBtn: string;
+  sending: string;
+  sentTitle: string;
+  sentPrefix: string;
+  sentSuffix: string;
+  sentSpam: string;
+  resendBtn: string;
+  resendIn: string;
+  fixEmail: string;
+  verifyLoading: string;
+  verifySuccessTitle: string;
+  verifySuccessDesc: string;
   validation: ValidationTranslations;
-  warningInfo: WarningInfoTranslations;
+  rulesPopup: RulesPopupTranslations;
 }
 
 export interface ErrorTranslations {
@@ -291,71 +339,99 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       },
     },
     reservation: {
-      introTitle: 'Tu możesz dokonać rezerwacji',
-      introDesc:
-        'Poniżej znajduje się mapa naszego obiektu. Kliknij przycisk \"Przejdź do rezerwacji\" aby wypełnić formularz',
-      startBtn: 'Przejdź do rezerwacji',
-      verificationTitle: 'Weryfikacja',
-      verificationDesc:
-        'Na podany adres został wysłany mail weryfikacyjny aktywny przez następne 15 min. Po zatwierdzeniu rezerwacja zostanie potwierdzona w systemie',
-      noEmailPrefix: 'Nie dostałeś maila? Odczekaj',
-      noEmailSuffix: 'sekund i spróbuj ponownie',
-      resendBtn: 'Wyślij ponownie',
-      retryBtn: 'Spróbuj ponownie',
-      backBtn: 'Cofnij',
-      nextBtn: 'Kontynuuj',
-      sendBtn: 'Wyślij',
-      verifySuccessTitle: 'Rezerwacja została zautoryzowana pomyślnie',
-      verifySuccessDesc: 'Wszystko gotowe, nie możemy sie doczekać twojego przyjazdu :)',
-      step1Title: 'Podaj parcele i czas pobytu',
-      selectPitch: 'Wybierz parcele',
-      pitchPriceLabel: 'cena za dobe:',
+      eyebrow: 'REZERWACJA ONLINE',
+      pageTitle: 'Zarezerwuj parcelę',
+      startDesc:
+        'Wybierz termin, a pokażemy wolne w nim parcele. Potem podaj dane kontaktowe i potwierdź rezerwację linkiem z maila. Online nic nie płacisz.',
+      startBtn: 'Rozpocznij rezerwację',
+      pitchTypesTitle: 'Rodzaje parcel',
+      fromPrice: 'od',
+      perNight: '/ doba',
       currency: 'zł',
-      selectDates: 'Wybierz termin',
-      selectPitchFirst: 'Najpierw wybierz parcele',
-      disabledDatesHint:
-        'Szare: zajęte. Z obwódką: wjazd innego gościa, wybierz jako dzień wyjazdu.',
-      invalidDateRange: 'Wybierz poprawny zakres dat',
-      priceTooltip:
-        'Przedstawiona cena jest tylko ceną poglądową, na poziomie rezerwacji online nie uiszczasz żadnych opłat, zostaną one pobrane dopiero na miejscu przy kasie',
-      suggestedPrice: 'Sugerowana cena:',
-      step2Title: 'Podaj swoje dane',
+      mapTitle: 'Mapa kempingu',
+      mapZoom: 'Powiększ mapę',
+      mapHint: 'Kliknij mapę, żeby zobaczyć ją w pełnym rozmiarze z legendą.',
+      mapAlt: 'Mapa Camper Park Stary Folwark z numerami parcel, recepcją, sanitariatami i wjazdem',
+      close: 'Zamknij',
+      steps: { stay: 'Termin i parcela', guest: 'Twoje dane', confirm: 'Potwierdzenie' },
+      stepLabel: 'Krok',
+      stepOf: 'z',
+      nextLabel: 'Dalej:',
+      datesTitle: 'Kiedy przyjeżdżasz?',
+      datesHintStart: 'Wybierz dzień przyjazdu',
+      datesHintEnd: 'Teraz wybierz dzień wyjazdu',
+      prevMonth: 'Poprzedni miesiąc',
+      nextMonth: 'Następny miesiąc',
+      legendStay: 'Twój pobyt',
+      legendFull: 'Brak wolnych parcel',
+      datesField: 'Termin pobytu',
+      datesPlaceholder: 'Wybierz termin',
+      change: 'Zmień',
+      showFreePitches: 'Pokaż wolne parcele',
+      pitchesTitle: 'Wolne parcele w tym terminie',
+      pitchesTitleShort: 'Wolne parcele',
+      freeCountLabel: 'Wolnych parcel:',
+      freeCountOf: 'z',
+      filterAll: 'Wszystkie',
+      filterLabel: 'Rodzaj parceli',
+      pitchLabel: 'Parcela',
+      showAllPitches: 'Pokaż wszystkie',
+      takenInRange: 'Zajęte w tym terminie:',
+      noFreePitches: 'W tym terminie nie ma wolnych parcel. Wybierz inny termin.',
+      noFreeDays: 'Nie udało się wczytać dostępności parcel.',
+      seeOnMap: 'Zobacz położenie na mapie',
+      mapShort: 'Mapa',
+      selectPitchHint: 'Wybierz parcelę, aby przejść dalej',
+      summaryTitle: 'Twoja rezerwacja',
+      checkin: 'Przyjazd',
+      checkout: 'Wyjazd',
+      pitch: 'Parcela',
+      term: 'Termin',
+      nightsLabel: 'Liczba nocy',
+      estimatedPrice: 'Szacowana cena',
+      paymentInfo: 'Online nic nie płacisz. Opłatę pobieramy na miejscu, w recepcji.',
+      nights: { one: 'noc', few: 'noce', many: 'nocy' },
+      guestTitle: 'Twoje dane',
+      guestDesc: 'Na podany email wyślemy link do potwierdzenia rezerwacji.',
       firstname: 'Imię',
       lastname: 'Nazwisko',
       email: 'Email',
-      phone: 'Numer telefonu',
-      registration: 'Rejestracja',
+      areaCode: 'Kierunkowy',
+      phone: 'Telefon',
+      registration: 'Numer rejestracyjny',
+      registrationPlaceholder: 'np. BSU 12345',
+      consentPrefix: 'Wysyłając rezerwację, akceptujesz',
+      consentRules: 'regulamin kempingu',
+      consentAnd: 'i',
+      consentPrivacy: 'politykę prywatności',
+      backBtn: 'Wstecz',
+      nextBtn: 'Dalej',
+      nextToGuest: 'Dalej: Twoje dane',
+      sendBtn: 'Wyślij rezerwację',
+      retryBtn: 'Spróbuj ponownie',
+      sending: 'Wysyłamy rezerwację…',
+      sentTitle: 'Sprawdź swoją skrzynkę',
+      sentPrefix: 'Wysłaliśmy link potwierdzający na',
+      sentSuffix: 'Kliknij go, a rezerwacja zostanie zapisana.',
+      sentSpam: 'Nie widzisz maila? Sprawdź folder spam.',
+      resendBtn: 'Wyślij ponownie',
+      resendIn: 'Wyślij ponownie za',
+      fixEmail: 'Popraw adres email',
+      verifyLoading: 'Potwierdzamy rezerwację…',
+      verifySuccessTitle: 'Rezerwacja potwierdzona',
+      verifySuccessDesc: 'Wszystko gotowe. Nie możemy się doczekać Twojego przyjazdu!',
       validation: {
         pitchRequired: 'Wybór parceli jest wymagany',
         checkinRequired: 'Wybierz datę przyjazdu',
         checkoutRequired: 'Wybierz datę wyjazdu',
         requiredField: 'To pole jest wymagane',
-        invalidEmail: 'Podaj poprawny adres email',
+        invalidEmail: 'Podaj poprawny adres email, np. jan@example.com',
         invalidPhoneNumber: 'Podaj poprawny numer telefonu',
       },
-      areaCode: 'Numer kierunkowy',
-      warningInfo: {
-        prefix: 'Klikając "Wyślij" akceptujesz',
-        linkText: 'regulamin prywatności oraz regulamin firmy',
-        suffix: '© 2026 Camper Park Stary Folwark',
-        popup: {
-          title: 'Regulamin',
-          body:
-            'Administratorem Pani/Pana danych osobowych jest Camper Park Stary Folwark Izabela Łukaszewska, z siedzibą przy Stary Folwark 55C,16-402 Suwałki, NIP 8441528757,REGON 200675128 \n' +
-            'Cel przetwarzania danych:\n' +
-            'Zarządzanie rezerwacjami i realizacja umowy o świadczenie usług kempingowych. \n' +
-            'Komunikacja z Panią/Panem w związku z rezerwacją (np. informacje o zmianach, anulacjach). \n' +
-            'W celach marketingowych, udostępnianie zdjęć z terenu kempingu\n' +
-            'Podstawa prawna:\n' +
-            'Zgodnie z art. 6 ust. 1 lit. a) Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 (RODO) przetwarzamy Pani/Pana dane osobowe na podstawie wyrażonej zgody w zakresie, w jakim jest ona udzielana. \n' +
-            'Zgodnie z art. 6 ust. 1 lit. b) RODO przetwarzamy Pani/Pana dane osobowe, jeśli są niezbędne do wykonania umowy o świadczenie usług kempingowych. \n' +
-            'Zgodnie z art. 6 ust. 1 lit. f) RODO przetwarzamy Pani/Pana dane osobowe w zakresie, w jakim jest to konieczne w celu realizacji naszych prawnie uzasadnionych interesów, np. w celu prowadzenia statystyk.\n' +
-            'Odbiorcy danych:\n' +
-            'Pani/Pana dane osobowe mogą być przekazywane organom państwowym na podstawie obowiązujących przepisów prawa. \n' +
-            'Okres przechowywania danych:\n' +
-            'Pani/Pana dane osobowe będą przechowywane przez okres niezbędny do realizacji celów przetwarzania, a po tym okresie przez okres wymagany przepisami prawa.',
-          close: 'Zamknij',
-        },
+      rulesPopup: {
+        title: 'Regulamin',
+        body: 'Treść regulaminu prywatności oraz regulaminu firmy zostanie uzupełniona.',
+        close: 'Zamknij',
       },
     },
     error: {
@@ -485,63 +561,99 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       },
     },
     reservation: {
-      introTitle: 'Here you can make a reservation',
-      introDesc:
-        'Below is a map of our campsite. Click the \"Proceed to reservation\" button to fill out the form',
-      startBtn: 'Proceed to reservation',
-      verificationTitle: 'Verification',
-      verificationDesc:
-        'A verification email has been sent to the provided address, that will be active for the next 15 minutes. The reservation will be saved after authorization',
-      noEmailPrefix: "Didn't receive the email? Wait",
-      noEmailSuffix: 'seconds and try again',
-      resendBtn: 'Resend',
-      retryBtn: 'Try again',
-      backBtn: 'Back',
-      nextBtn: 'Continue',
-      sendBtn: 'Send',
-      verifySuccessTitle: 'Reservation authorized successfully',
-      verifySuccessDesc: "Everything is ready, we can't wait for your arrival :)",
-      step1Title: 'Select pitch and stay duration',
-      selectPitch: 'Select pitch',
-      pitchPriceLabel: 'price per night:',
+      eyebrow: 'ONLINE BOOKING',
+      pageTitle: 'Book a pitch',
+      startDesc:
+        "Pick your dates and we'll show the pitches free at that time. Then enter your contact details and confirm the booking with the link we email you. You pay nothing online.",
+      startBtn: 'Start booking',
+      pitchTypesTitle: 'Pitch types',
+      fromPrice: 'from',
+      perNight: '/ night',
       currency: 'PLN',
-      selectDates: 'Select dates',
-      selectPitchFirst: 'First select a pitch',
-      disabledDatesHint:
-        "Gray: taken. Outlined: another guest's arrival, pick it as your departure day.",
-      invalidDateRange: 'Select a valid date range',
-      priceTooltip:
-        'The price shown is only an estimate, you do not pay anything online during reservation, payment will be collected at the reception desk',
-      suggestedPrice: 'Suggested price:',
-      step2Title: 'Enter your details',
+      mapTitle: 'Campsite map',
+      mapZoom: 'Enlarge map',
+      mapHint: 'Click the map to see it full size with the legend.',
+      mapAlt: 'Map of Camper Park Stary Folwark with pitch numbers, reception, sanitary facilities and the entrance',
+      close: 'Close',
+      steps: { stay: 'Dates and pitch', guest: 'Your details', confirm: 'Confirmation' },
+      stepLabel: 'Step',
+      stepOf: 'of',
+      nextLabel: 'Next:',
+      datesTitle: 'When are you arriving?',
+      datesHintStart: 'Pick your arrival day',
+      datesHintEnd: 'Now pick your departure day',
+      prevMonth: 'Previous month',
+      nextMonth: 'Next month',
+      legendStay: 'Your stay',
+      legendFull: 'No free pitches',
+      datesField: 'Dates of stay',
+      datesPlaceholder: 'Pick dates',
+      change: 'Change',
+      showFreePitches: 'Show free pitches',
+      pitchesTitle: 'Pitches free on these dates',
+      pitchesTitleShort: 'Free pitches',
+      freeCountLabel: 'Free pitches:',
+      freeCountOf: 'of',
+      filterAll: 'All',
+      filterLabel: 'Pitch type',
+      pitchLabel: 'Pitch',
+      showAllPitches: 'Show all',
+      takenInRange: 'Taken on these dates:',
+      noFreePitches: 'There are no free pitches on these dates. Pick other dates.',
+      noFreeDays: 'Could not load pitch availability.',
+      seeOnMap: 'See locations on the map',
+      mapShort: 'Map',
+      selectPitchHint: 'Pick a pitch to continue',
+      summaryTitle: 'Your booking',
+      checkin: 'Arrival',
+      checkout: 'Departure',
+      pitch: 'Pitch',
+      term: 'Dates',
+      nightsLabel: 'Nights',
+      estimatedPrice: 'Estimated price',
+      paymentInfo: 'You pay nothing online. Payment is taken on site, at reception.',
+      nights: { one: 'night', few: 'nights', many: 'nights' },
+      guestTitle: 'Your details',
+      guestDesc: "We'll send a link to confirm the booking to this email.",
       firstname: 'First name',
       lastname: 'Last name',
       email: 'Email',
-      phone: 'Phone number',
-      registration: 'License plate',
+      areaCode: 'Code',
+      phone: 'Phone',
+      registration: 'Licence plate',
+      registrationPlaceholder: 'e.g. BSU 12345',
+      consentPrefix: 'By sending the booking you accept the',
+      consentRules: 'campsite rules',
+      consentAnd: 'and',
+      consentPrivacy: 'privacy policy',
+      backBtn: 'Back',
+      nextBtn: 'Next',
+      nextToGuest: 'Next: Your details',
+      sendBtn: 'Send booking',
+      retryBtn: 'Try again',
+      sending: 'Sending your booking…',
+      sentTitle: 'Check your inbox',
+      sentPrefix: "We've sent a confirmation link to",
+      sentSuffix: 'Click it and the booking will be saved.',
+      sentSpam: "Can't see the email? Check your spam folder.",
+      resendBtn: 'Resend',
+      resendIn: 'Resend in',
+      fixEmail: 'Correct email address',
+      verifyLoading: 'Confirming your booking…',
+      verifySuccessTitle: 'Booking confirmed',
+      verifySuccessDesc: "All set. We can't wait for your arrival!",
       validation: {
         pitchRequired: 'Pitch selection is required',
         checkinRequired: 'Select check-in date',
         checkoutRequired: 'Select check-out date',
         requiredField: 'This field is required',
-        invalidEmail: 'Provide a valid email address',
-        invalidPhoneNumber: 'Provide a valid phone number.',
+        invalidEmail: 'Enter a valid email address, e.g. jan@example.com',
+        invalidPhoneNumber: 'Enter a valid phone number',
       },
-      areaCode: 'Area code',
-      warningInfo: {
-        prefix: "By clicking 'Send' you accept the",
-        linkText: 'privacy policy and company rules',
-        suffix: '© 2026 Camper Park Stary Folwark',
-        popup: {
-          title: 'Rules',
-          body:
-            'The administrator of your personal data is Camper Park Stary Folwark Izabela Łukaszewska, with its registered office at Stary Folwark 55C, 16-402 Suwałki, NIP 8441528757, REGON 200675128\n' +
-            'Purpose of data processing: Managing reservations and performing the camping services contract. Communication with you regarding the reservation (e.g., information about changes, cancellations). For marketing purposes, sharing photos from the campsite.\n' +
-            'Legal basis: According to Article 6(1)(a) of the European Parliament and Council Regulation (EU) 2016/679 (GDPR), we process your personal data based on the consent you have given, to the extent that it is granted. According to Article 6(1)(b) GDPR, we process your personal data if it is necessary to fulfill the camping services contract. According to Article 6(1)(f) GDPR, we process your personal data to the extent necessary for the realization of our legitimate interests, such as conducting statistics.\n' +
-            'Recipients of data: Your personal data may be provided to public authorities based on applicable legal provisions.\n' +
-            'Data retention period: Your personal data will be stored for as long as necessary to achieve the purposes of processing, and after that period, for the time required by law.',
-          close: 'Close',
-        },
+      rulesPopup: {
+        title: 'Rules',
+        body: 'The privacy policy and campsite rules will be added here.',
+        close: 'Close',
       },
     },
     error: {
