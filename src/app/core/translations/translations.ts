@@ -175,8 +175,6 @@ export interface ReservationTranslations {
   registration: string;
   registrationPlaceholder: string;
   consentPrefix: string;
-  consentRules: string;
-  consentAnd: string;
   consentPrivacy: string;
   backBtn: string;
   nextBtn: string;
@@ -401,8 +399,6 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       registration: 'Numer rejestracyjny',
       registrationPlaceholder: 'np. BSU 12345',
       consentPrefix: 'Wysyłając rezerwację, akceptujesz',
-      consentRules: 'regulamin kempingu',
-      consentAnd: 'i',
       consentPrivacy: 'politykę prywatności',
       backBtn: 'Wstecz',
       nextBtn: 'Dalej',
@@ -430,7 +426,20 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       },
       rulesPopup: {
         title: 'Regulamin',
-        body: 'Treść regulaminu prywatności oraz regulaminu firmy zostanie uzupełniona.',
+        body:
+          'Administratorem Pani/Pana danych osobowych jest Camper Park Stary Folwark Izabela Łukaszewska, z siedzibą przy Stary Folwark 55C,16-402 Suwałki, NIP 8441528757,REGON 200675128 \n' +
+          'Cel przetwarzania danych:\n' +
+          'Zarządzanie rezerwacjami i realizacja umowy o świadczenie usług kempingowych. \n' +
+          'Komunikacja z Panią/Panem w związku z rezerwacją (np. informacje o zmianach, anulacjach). \n' +
+          'W celach marketingowych, udostępnianie zdjęć z terenu kempingu\n' +
+          'Podstawa prawna:\n' +
+          'Zgodnie z art. 6 ust. 1 lit. a) Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 (RODO) przetwarzamy Pani/Pana dane osobowe na podstawie wyrażonej zgody w zakresie, w jakim jest ona udzielana. \n' +
+          'Zgodnie z art. 6 ust. 1 lit. b) RODO przetwarzamy Pani/Pana dane osobowe, jeśli są niezbędne do wykonania umowy o świadczenie usług kempingowych. \n' +
+          'Zgodnie z art. 6 ust. 1 lit. f) RODO przetwarzamy Pani/Pana dane osobowe w zakresie, w jakim jest to konieczne w celu realizacji naszych prawnie uzasadnionych interesów, np. w celu prowadzenia statystyk.\n' +
+          'Odbiorcy danych:\n' +
+          'Pani/Pana dane osobowe mogą być przekazywane organom państwowym na podstawie obowiązujących przepisów prawa. \n' +
+          'Okres przechowywania danych:\n' +
+          'Pani/Pana dane osobowe będą przechowywane przez okres niezbędny do realizacji celów przetwarzania, a po tym okresie przez okres wymagany przepisami prawa.',
         close: 'Zamknij',
       },
     },
@@ -573,7 +582,8 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       mapTitle: 'Campsite map',
       mapZoom: 'Enlarge map',
       mapHint: 'Click the map to see it full size with the legend.',
-      mapAlt: 'Map of Camper Park Stary Folwark with pitch numbers, reception, sanitary facilities and the entrance',
+      mapAlt:
+        'Map of Camper Park Stary Folwark with pitch numbers, reception, sanitary facilities and the entrance',
       close: 'Close',
       steps: { stay: 'Dates and pitch', guest: 'Your details', confirm: 'Confirmation' },
       stepLabel: 'Step',
@@ -623,8 +633,6 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       registration: 'Licence plate',
       registrationPlaceholder: 'e.g. BSU 12345',
       consentPrefix: 'By sending the booking you accept the',
-      consentRules: 'campsite rules',
-      consentAnd: 'and',
       consentPrivacy: 'privacy policy',
       backBtn: 'Back',
       nextBtn: 'Next',
@@ -652,7 +660,19 @@ export const TRANSLATIONS: Record<'pl' | 'en', TranslationSchema> = {
       },
       rulesPopup: {
         title: 'Rules',
-        body: 'The privacy policy and campsite rules will be added here.',
+        body:
+          'The administrator of your personal data is Camper Park Stary Folwark Izabela Łukaszewska, with its registered office at Stary Folwark 55C, 16-402 Suwałki, NIP 8441528757, REGON 200675128\n' +
+          'Purpose of data processing:' +
+          'Managing reservations and performing the camping services contract. ' +
+          'Communication with you regarding the reservation (e.g., information about changes, cancellations).' +
+          'For marketing purposes, sharing photos from the campsite.' +
+          '\nLegal basis: ' +
+          'According to Article 6(1)(a) of the European Parliament and Council Regulation (EU) 2016/679 (GDPR), we process your personal data based on the consent you have given, to the extent that it is granted.' +
+          'According to Article 6(1)(b) GDPR, we process your personal data if it is necessary to fulfill the camping services contract.' +
+          'According to Article 6(1)(f) GDPR, we process your personal data to the extent necessary for the realization of our legitimate interests, such as conducting statistics.\n' +
+          'Recipients of data: Your personal data may be provided to public authorities based on applicable legal provisions.\n' +
+          'Data retention period:' +
+          'Your personal data will be stored for as long as necessary to achieve the purposes of processing, and after that period, for the time required by law.',
         close: 'Close',
       },
     },

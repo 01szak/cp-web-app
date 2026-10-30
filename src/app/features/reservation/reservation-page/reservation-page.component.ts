@@ -299,10 +299,6 @@ const STEPS: Step[] = ['STAY', 'GUEST', 'SENT'];
                   <p class="consent">
                     {{ t.consentPrefix }}
                     <button type="button" class="rv-link" (click)="isRulesOpen.set(true)">
-                      {{ t.consentRules }}
-                    </button>
-                    {{ t.consentAnd }}
-                    <button type="button" class="rv-link" (click)="isRulesOpen.set(true)">
                       {{ t.consentPrivacy }}
                     </button>
                     .
@@ -918,7 +914,7 @@ export class ReservationPageComponent implements OnInit, OnDestroy {
   // protected readonly camperPlacesResource = this.parceo.camperPlaces();
   protected readonly pitchTypesResource = this.parceo.camperPlaceTypes();
   protected readonly createReservationResource = this.parceo.createReservation(() =>
-    this.reservationRequest(),
+    ( {reservation: this.reservationRequest(), locale: this.ts.currentLang()} )
   );
   protected readonly verifyTargetIdResource = this.parceo.verifyReservation(
     () => this.verifyTargetId,
