@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { of } from 'rxjs';
 import { CamperPlaceDTO, CamperPlaceTypeDTO, ReservationDTO } from '../models/reservation.models';
+import { Language } from '../../../core/services/translation.service';
 
 interface CalculatedPriceRequest {
   cpId: number | undefined;
@@ -14,7 +15,6 @@ interface CalculatedPriceRequest {
   providedIn: 'root',
 })
 export class ParceoService {
-
   private readonly http = inject(HttpClient);
 
   camperPlaceTypes() {
@@ -56,12 +56,13 @@ export class ParceoService {
     });
   }
 
-  createReservation(request: () => ReservationDTO | null) {
+  createReservation(request: () => { reservation: ReservationDTO | null; locale: Language }) {
     return rxResource({
       params: request,
       stream: ({ params }) => {
-        if (!params) return of(null);
-        return this.http.post('/api/web/reservation/init', params, { responseType: 'text' });
+        if (!params.reservation) return of(null);
+        const body = { reservationDTO: params.reservation, locale: params.locale };
+        return this.http.post('/api/web/reservation/init', body, { responseType: 'text' });
       },
     });
   }

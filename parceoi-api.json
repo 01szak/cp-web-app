@@ -23,15 +23,15 @@
         "tags": ["web-app-controller"],
         "operationId": "createUnverifiedReservationAndSendAuthenticationEmail",
         "parameters": [
+          {
+            "name": "request",
+            "in": "query",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/ResInitRequest" }
+          },
           { "name": "X-org-id", "in": "header", "required": true },
           { "name": "X-api-key", "in": "header", "required": true }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": { "schema": { "$ref": "#/components/schemas/ReservationDTO" } }
-          },
-          "required": true
-        },
         "responses": {
           "200": { "description": "OK", "content": { "*/*": { "schema": { "type": "string" } } } }
         }
@@ -668,6 +668,14 @@
           "country": { "type": "string" }
         }
       },
+      "ResInitRequest": {
+        "type": "object",
+        "properties": {
+          "reservationDTO": { "$ref": "#/components/schemas/ReservationDTO" },
+          "locale": { "type": "string", "enum": ["en", "pl"] }
+        },
+        "required": ["locale", "reservationDTO"]
+      },
       "ReservationDTO": {
         "type": "object",
         "properties": {
@@ -731,8 +739,8 @@
       "PageReservationDTO": {
         "type": "object",
         "properties": {
-          "totalPages": { "type": "integer", "format": "int32" },
           "totalElements": { "type": "integer", "format": "int64" },
+          "totalPages": { "type": "integer", "format": "int32" },
           "size": { "type": "integer", "format": "int32" },
           "content": {
             "type": "array",
@@ -740,9 +748,9 @@
           },
           "number": { "type": "integer", "format": "int32" },
           "pageable": { "$ref": "#/components/schemas/Pageablenull" },
-          "sort": { "$ref": "#/components/schemas/Sortnull" },
           "first": { "type": "boolean" },
           "last": { "type": "boolean" },
+          "sort": { "$ref": "#/components/schemas/Sortnull" },
           "numberOfElements": { "type": "integer", "format": "int32" },
           "empty": { "type": "boolean" }
         }
@@ -754,8 +762,8 @@
           "paged": { "type": "boolean" },
           "pageNumber": { "type": "integer", "format": "int32" },
           "pageSize": { "type": "integer", "format": "int32" },
-          "sort": { "$ref": "#/components/schemas/Sortnull" },
-          "unpaged": { "type": "boolean" }
+          "unpaged": { "type": "boolean" },
+          "sort": { "$ref": "#/components/schemas/Sortnull" }
         }
       },
       "Sortnull": {
@@ -769,15 +777,15 @@
       "PageGuestDTO": {
         "type": "object",
         "properties": {
-          "totalPages": { "type": "integer", "format": "int32" },
           "totalElements": { "type": "integer", "format": "int64" },
+          "totalPages": { "type": "integer", "format": "int32" },
           "size": { "type": "integer", "format": "int32" },
           "content": { "type": "array", "items": { "$ref": "#/components/schemas/GuestDTO" } },
           "number": { "type": "integer", "format": "int32" },
           "pageable": { "$ref": "#/components/schemas/Pageablenull" },
-          "sort": { "$ref": "#/components/schemas/Sortnull" },
           "first": { "type": "boolean" },
           "last": { "type": "boolean" },
+          "sort": { "$ref": "#/components/schemas/Sortnull" },
           "numberOfElements": { "type": "integer", "format": "int32" },
           "empty": { "type": "boolean" }
         }
@@ -785,8 +793,8 @@
       "PageCamperPlaceDTO": {
         "type": "object",
         "properties": {
-          "totalPages": { "type": "integer", "format": "int32" },
           "totalElements": { "type": "integer", "format": "int64" },
+          "totalPages": { "type": "integer", "format": "int32" },
           "size": { "type": "integer", "format": "int32" },
           "content": {
             "type": "array",
@@ -794,9 +802,9 @@
           },
           "number": { "type": "integer", "format": "int32" },
           "pageable": { "$ref": "#/components/schemas/Pageablenull" },
-          "sort": { "$ref": "#/components/schemas/Sortnull" },
           "first": { "type": "boolean" },
           "last": { "type": "boolean" },
+          "sort": { "$ref": "#/components/schemas/Sortnull" },
           "numberOfElements": { "type": "integer", "format": "int32" },
           "empty": { "type": "boolean" }
         }
