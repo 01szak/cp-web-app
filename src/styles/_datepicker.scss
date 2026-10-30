@@ -1,0 +1,31 @@
+// Calendar styles live here because Material renders the calendar cells outside the
+// components' style encapsulation.
+
+.rv-calendar {
+  // The month name is shown by the custom header; hide the "PAŹ" label in the first row.
+  .mat-calendar-body-label {
+    visibility: hidden;
+  }
+
+  .mat-calendar-table-header-divider {
+    display: none;
+  }
+
+  .mat-calendar-table-header th {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+  }
+
+  .mat-calendar-body-cell-content {
+    border-radius: 8px;
+    font-weight: 500;
+  }
+}
+
+// A night with no free pitch anywhere in the camp.
+button.mat-calendar-body-cell.rv-full > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+  background-color: var(--color-occupied);
+  color: #8a877a;
+  text-decoration: line-through;
+}

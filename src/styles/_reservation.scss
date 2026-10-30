@@ -1,0 +1,330 @@
+// Shared building blocks of the reservation flow (page, step forms, summary).
+// Kept global because several components use them; every class is prefixed with `rv-`.
+
+$rv-mobile: 767px;
+
+.rv-page {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+  box-sizing: border-box;
+  color: var(--color-text-dark);
+
+  @media (max-width: $rv-mobile) {
+    padding: 20px 16px 32px;
+  }
+}
+
+.rv-serif {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.rv-eyebrow {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--color-accent-gold-ink);
+}
+
+.rv-title {
+  margin: 0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 40px;
+  line-height: 1.15;
+
+  @media (max-width: $rv-mobile) {
+    font-size: 28px;
+  }
+}
+
+.rv-card {
+  background: var(--color-bg-light-soft);
+  border-radius: 16px;
+  padding: 32px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  @media (max-width: $rv-mobile) {
+    padding: 20px 16px;
+    gap: 16px;
+  }
+}
+
+.rv-card-title {
+  margin: 0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 26px;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  @media (max-width: $rv-mobile) {
+    font-size: 22px;
+  }
+}
+
+.rv-hint {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.rv-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-body);
+}
+
+.rv-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.rv-layout-main {
+  flex: 999 1 560px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  @media (max-width: $rv-mobile) {
+    gap: 16px;
+  }
+}
+
+.rv-layout-aside {
+  flex: 1 1 320px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.rv-mobile-only {
+  @media (min-width: #{$rv-mobile + 1}) {
+    display: none !important;
+  }
+}
+
+.rv-desktop-only {
+  @media (max-width: $rv-mobile) {
+    display: none !important;
+  }
+}
+
+// Buttons. Dark text on gold: white on #c2a14a only reaches 2.5:1.
+.rv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-bg-section-dark);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.rv-btn--primary {
+  background: var(--color-accent-gold);
+  color: var(--color-text-dark);
+
+  &:not(:disabled):hover {
+    background: var(--color-accent-hover);
+  }
+
+  &:disabled {
+    background: var(--color-occupied);
+    color: #8a877a;
+  }
+}
+
+.rv-btn--ghost {
+  padding: 0 16px;
+  background: transparent;
+  color: var(--color-bg-section-dark);
+  font-weight: 500;
+
+  &:not(:disabled):hover {
+    background: rgb(62 74 39 / 0.08);
+  }
+}
+
+.rv-btn--outline {
+  padding: 0 24px;
+  background: transparent;
+  border: 1.5px solid var(--color-accent-gold-ink);
+  color: var(--color-accent-gold-ink);
+
+  &:not(:disabled):hover {
+    background: rgb(122 95 26 / 0.08);
+  }
+
+  &:disabled {
+    border-color: var(--color-border-control);
+    color: var(--color-text-secondary);
+  }
+}
+
+.rv-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 500;
+  color: var(--color-accent-gold-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-accent-gold-ink-hover);
+  }
+}
+
+.rv-icon-btn {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-bg-section-dark);
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: rgb(62 74 39 / 0.08);
+  }
+
+  &:disabled {
+    color: #b5b2a5;
+    cursor: default;
+  }
+}
+
+.rv-info {
+  margin: 0;
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--color-bg-info);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-body);
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+}
+
+.rv-step-badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--color-bg-section-dark);
+  color: var(--color-bg-light-soft);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+// Bottom action row. On a phone it sticks to the bottom of the screen.
+.rv-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  @media (max-width: $rv-mobile) {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    margin: 0 -16px -32px;
+    padding: 12px 16px 20px;
+    background: var(--color-bg-light-soft);
+    border-top: 1px solid var(--color-border-soft);
+    box-shadow: 0 -4px 16px rgb(42 51 27 / 0.08);
+    flex-wrap: nowrap;
+  }
+}
+
+.rv-actions-price {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+
+  small {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+  }
+
+  strong {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 24px;
+    color: var(--color-bg-section-dark);
+  }
+}
+
+// Full-screen dialogs (map, rules) and the phone calendar sheet.
+.rv-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  background: rgb(31 31 31 / 0.6);
+}
+
+.rv-dialog {
+  width: 100%;
+  max-width: 600px;
+  max-height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 32px;
+  border-radius: 16px;
+  background: var(--color-bg-light-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  h2 {
+    margin: 0;
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+}

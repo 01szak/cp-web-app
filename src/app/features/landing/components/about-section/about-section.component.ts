@@ -16,7 +16,7 @@ import { TranslationService } from '../../../../core/services/translation.servic
           <span class="about__subtitle">{{ ts.t.about.subtitle }}</span>
           <h2 class="about__title">{{ ts.t.about.title }}</h2>
         </div>
-        <div appRevealOnScroll class="about__text">
+        <div appRevealOnScroll class="about">
           <p>{{ ts.t.about.text1 }}</p>
           <p>{{ ts.t.about.text2 }}</p>
         </div>
@@ -83,10 +83,6 @@ import { TranslationService } from '../../../../core/services/translation.servic
         font-size: 0.8rem;
         display: block;
         margin-bottom: 1rem;
-      }
-
-      &__text {
-        p { margin-bottom: 1.5rem; font-size: 1.1rem; opacity: 0.9; }
       }
 
       &__actions {

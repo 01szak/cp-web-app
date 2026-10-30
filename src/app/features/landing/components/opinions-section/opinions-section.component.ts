@@ -124,21 +124,6 @@ interface Opinion {
     }
 
     .opinions__cta { margin-top: var(--spacing-lg); }
-
-    .btn-outline {
-      display: inline-block;
-      padding: 0.75rem 2rem;
-      border: 2px solid var(--color-accent-gold);
-      color: var(--color-accent-gold);
-      font-weight: 700;
-      border-radius: 4px;
-      transition: var(--transition-smooth);
-
-      &:hover {
-        background: var(--color-accent-gold);
-        color: white;
-      }
-    }
   `]
 })
 export class OpinionsSectionComponent {
